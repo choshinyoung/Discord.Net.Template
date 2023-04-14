@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Net.Template", "Discord.Net.Template\Discord.Net.Template.csproj", "{5D7051A2-FAF7-4CD4-9DA3-C8D1CA8AFD59}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D7051A2-FAF7-4CD4-9DA3-C8D1CA8AFD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D7051A2-FAF7-4CD4-9DA3-C8D1CA8AFD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D7051A2-FAF7-4CD4-9DA3-C8D1CA8AFD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D7051A2-FAF7-4CD4-9DA3-C8D1CA8AFD59}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
