@@ -47,6 +47,11 @@ public class CommandEventHandler : IEventHandler
     private static async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context,
         IResult result)
     {
+        if (result.IsSuccess)
+        {
+            return;
+        }
+
         var socketContext = (context as SocketCommandContext)!;
 
         if (Bot.IsDebugMode)
