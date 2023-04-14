@@ -1,6 +1,6 @@
 ﻿namespace Discord.Net.Template.Events;
 
-public static class EventHandler
+public class EventHandler : IEventHandler
 {
     public static void Register()
     {

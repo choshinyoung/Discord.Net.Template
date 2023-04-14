@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Discord.Interactions;
 using Discord.Net.Template.Events;
-using Discord.Net.Template.Utility;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Discord.Net.Template.Interactions;
@@ -11,7 +10,7 @@ public static class InteractionManager
     private static readonly InteractionServiceConfig InteractionConfig = new()
     {
         DefaultRunMode = RunMode.Async,
-        LogLevel = Config.GetBool("DEBUG_MODE") ? LogSeverity.Debug : LogSeverity.Info
+        LogLevel = Bot.IsDebugMode ? LogSeverity.Debug : LogSeverity.Info
     };
 
     public static readonly InteractionService Interaction = new(Bot.Client, InteractionConfig);

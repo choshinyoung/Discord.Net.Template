@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Discord.Net.Template.Events;
 
-public static class InteractionEventHandler
+public class InteractionEventHandler : IEventHandler
 {
     public static void Register()
     {
-        InteractionManager.Interaction.Log += InteractionLog;
+        InteractionManager.Interaction.Log += OnLog;
 
         Bot.Client.Ready += OnReady;
 
@@ -17,7 +17,7 @@ public static class InteractionEventHandler
         InteractionManager.Interaction.SlashCommandExecuted += OnSlashCommandExecuted;
     }
 
-    private static async Task InteractionLog(LogMessage message)
+    private static async Task OnLog(LogMessage message)
     {
         Console.WriteLine(message);
 
