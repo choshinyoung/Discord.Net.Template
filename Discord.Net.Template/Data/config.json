@@ -1,0 +1,6 @@
+﻿{
+  "VERSION": "v1.0.0",
+  "DEBUG_MODE": true,
+  "PREFIX": "/",
+  "TOKEN": "YOUR_TOKEN"
+}

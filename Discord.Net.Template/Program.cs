@@ -1,1 +1,3 @@
-﻿Console.WriteLine("Hello new Template!");
+﻿using Discord.Net.Template;
+
+await Bot.Start();
