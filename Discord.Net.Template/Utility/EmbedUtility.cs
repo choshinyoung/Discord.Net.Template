@@ -1,0 +1,39 @@
+﻿using Discord.Interactions;
+using Discord.WebSocket;
+
+namespace Discord.Net.Template.Utility;
+
+public static class EmbedUtility
+{
+    public static EmbedBuilder CreateEmbedFromContext(SocketInteractionContext context, object? description = null,
+        string? title = null, string? imgUrl = null, string? url = null, string? thumbnailUrl = null,
+        Color? color = null)
+    {
+        return CreateEmbed(description, title, imgUrl, url, thumbnailUrl, color);
+    }
+
+    public static EmbedBuilder CreateEmbedFromUser(SocketUser user, object? description = null, string? title = null,
+        string? imgUrl = null, string? url = null, string? thumbnailUrl = null, Color? color = null)
+    {
+        return CreateEmbed(description, title, imgUrl, url, thumbnailUrl, color);
+    }
+
+    public static EmbedBuilder CreateEmbed(object? description = null, string? title = null, string? imgUrl = null,
+        string? url = null, string? thumbnailUrl = null, Color? color = null)
+    {
+        return new EmbedBuilder
+        {
+            Title = title,
+            Color = color ?? new Color(255, 200, 0),
+            Description = description?.ToString(),
+            ImageUrl = imgUrl,
+            Url = url,
+            ThumbnailUrl = thumbnailUrl
+        };
+    }
+
+    public static EmbedBuilder AddEmptyField(this EmbedBuilder emb)
+    {
+        return emb.AddField("**  **", "** **", true);
+    }
+}
