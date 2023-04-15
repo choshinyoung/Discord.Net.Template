@@ -1,4 +1,5 @@
 ﻿using Discord.Interactions;
+using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,9 +41,25 @@ public class InteractionEventHandler : IEventHandler
     private static async Task OnSlashCommandExecuted(SlashCommandInfo command, IInteractionContext context,
         IResult result)
     {
+        if (result.IsSuccess)
+        {
+            return;
+        }
+
+        var socketContext = (context as SocketInteractionContext)!;
+
         if (result is { IsSuccess: false, Error: InteractionCommandError.UnmetPrecondition })
         {
-            await context.Interaction.RespondAsync("권한이 없어서 커맨드를 실행할 수 없어요", ephemeral: true);
+            await socketContext.RespondAsync("권한이 없어서 커맨드를 실행할 수 없어요", true);
+        }
+
+        if (Bot.IsDebugMode)
+        {
+            await socketContext.RespondOrFollowupAsync($"오류 발생!\n```{result.ErrorReason}```", true);
+        }
+        else
+        {
+            await socketContext.RespondOrFollowupAsync("오류 발생!", true);
         }
     }
 }

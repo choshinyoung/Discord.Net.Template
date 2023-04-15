@@ -1,7 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.Net.Template.Commands;
 using Discord.Net.Template.Extensions;
-using Discord.Net.Template.Utility;
 using Discord.WebSocket;
 
 namespace Discord.Net.Template.Events;
@@ -56,16 +55,11 @@ public class CommandEventHandler : IEventHandler
 
         if (Bot.IsDebugMode)
         {
-            var emb = EmbedUtility.CreateEmbedFromContext(socketContext, title: "오류 발생!",
-                description: result.ErrorReason);
-
-            await socketContext.ReplyEmbedAsync(emb.Build());
+            await socketContext.ReplyAsync($"오류 발생!\n```{result.ErrorReason}```");
         }
         else
         {
-            IEmote emote = new Emoji("⚠️");
-
-            await context.Message.AddReactionAsync(emote);
+            await socketContext.ReplyAsync("오류 발생!");
         }
     }
 }

@@ -19,6 +19,19 @@ public static class SocketInteractionContextExtensions
             allowedMentions: disableMention ? AllowedMentions.None : null, components: component);
     }
 
+    public static async Task RespondOrFollowupAsync(this SocketInteractionContext context, object content,
+        bool ephemeral = false, bool disableMention = true, MessageComponent? component = null)
+    {
+        if (context.Interaction.HasResponded)
+        {
+            await context.FollowupAsync(content, ephemeral, disableMention, component);
+        }
+        else
+        {
+            await context.RespondAsync(content, ephemeral, disableMention, component);
+        }
+    }
+
     public static async Task SendAsync(this SocketInteractionContext context, object content,
         bool disableMention = true, MessageComponent? component = null, MessageReference? messageReference = null)
     {
