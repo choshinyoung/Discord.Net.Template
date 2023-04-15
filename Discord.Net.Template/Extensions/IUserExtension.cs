@@ -2,7 +2,7 @@
 
 namespace Discord.Net.Template.Extensions;
 
-public static class DiscordUserExtension
+public static class DiscordUserExtensions
 {
     public static string GetAvatar(this IUser user)
     {

@@ -3,7 +3,7 @@ using Discord.Net.Template.Utility;
 
 namespace Discord.Net.Template.Extensions;
 
-public static class SocketInteractionContextExtension
+public static class SocketInteractionContextExtensions
 {
     public static async Task RespondAsync(this SocketInteractionContext context, object content,
         bool ephemeral = false, bool disableMention = true, MessageComponent? component = null)

@@ -4,7 +4,7 @@ using Discord.Rest;
 
 namespace Discord.Net.Template.Extensions;
 
-public static class SocketCommandContextExtension
+public static class SocketCommandContextExtensions
 {
     public static async Task<RestUserMessage> ReplyAsync(this SocketCommandContext context, object content,
         bool disableMention = true, MessageComponent? component = null)
