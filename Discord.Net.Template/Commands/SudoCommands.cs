@@ -7,13 +7,13 @@ using Microsoft.CodeAnalysis.Scripting;
 namespace Discord.Net.Template.Commands;
 
 [Group("sudo")]
-public class SudoCommands : ModuleBase<SocketCommandContext>
+public partial class SudoCommands : ModuleBase<SocketCommandContext>
 {
     [Command("run")]
     [Alias("eval", "execute")]
     public async Task Execute([Remainder] string code)
     {
-        Regex regex = new(@"^\s*(```(cs)?\s*(?<block_code>.+)\s*```)|(?<code>.+)\s*$");
+        var regex = CodeRegex();
 
         var match = regex.Match(code);
 
@@ -49,4 +49,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
             await Context.ReplyAsFileAsync($"오류 발생!\n```{e}```");
         }
     }
+
+    [GeneratedRegex("^\\s*(```(cs)?\\s*(?<block_code>.+)\\s*```)|(?<code>.+)\\s*$")]
+    private static partial Regex CodeRegex();
 }
