@@ -9,12 +9,12 @@ public class InteractionEventHandler : IEventHandler
 {
     public static void Register()
     {
-        InteractionManager.Interaction.Log += OnLog;
+        InteractionManager.Service.Log += OnLog;
 
         Bot.Client.Ready += OnReady;
 
         Bot.Client.InteractionCreated += OnInteractionCreated;
-        InteractionManager.Interaction.SlashCommandExecuted += OnSlashCommandExecuted;
+        InteractionManager.Service.SlashCommandExecuted += OnSlashCommandExecuted;
     }
 
     private static async Task OnLog(LogMessage message)
@@ -26,15 +26,15 @@ public class InteractionEventHandler : IEventHandler
 
     private static async Task OnReady()
     {
-        await InteractionManager.Interaction.RegisterCommandsGloballyAsync();
+        await InteractionManager.Service.RegisterCommandsGloballyAsync();
     }
 
     private static async Task OnInteractionCreated(SocketInteraction interaction)
     {
-        var scope = InteractionManager.Service.CreateScope();
+        var scope = Bot.Service.CreateScope();
         SocketInteractionContext ctx = new(Bot.Client, interaction);
 
-        await InteractionManager.Interaction.ExecuteCommandAsync(ctx, scope.ServiceProvider);
+        await InteractionManager.Service.ExecuteCommandAsync(ctx, scope.ServiceProvider);
     }
 
     private static async Task OnSlashCommandExecuted(SlashCommandInfo command, IInteractionContext context,

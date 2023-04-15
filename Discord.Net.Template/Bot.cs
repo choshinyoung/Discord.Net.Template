@@ -2,6 +2,7 @@
 using Discord.Net.Template.Interactions;
 using Discord.Net.Template.Utility;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using EventHandler = Discord.Net.Template.Events.EventHandler;
 
 namespace Discord.Net.Template;
@@ -17,6 +18,12 @@ public static class Bot
     };
 
     public static readonly DiscordSocketClient Client = new(ClientConfig);
+
+    public static readonly IServiceProvider Service = new ServiceCollection()
+        .AddSingleton(Client)
+        .AddSingleton(InteractionManager.Service)
+        .AddSingleton(CommandManager.Service)
+        .BuildServiceProvider();
 
     public static async Task Start()
     {

@@ -10,10 +10,10 @@ public class CommandEventHandler : IEventHandler
 {
     public static void Register()
     {
-        CommandManager.Command.Log += OnLog;
+        CommandManager.Service.Log += OnLog;
 
         Bot.Client.MessageReceived += OnMessageReceived;
-        CommandManager.Command.CommandExecuted += OnCommandExecuted;
+        CommandManager.Service.CommandExecuted += OnServiceExecuted;
     }
 
     private static async Task OnLog(LogMessage message)
@@ -37,14 +37,14 @@ public class CommandEventHandler : IEventHandler
         if (userMsg.HasStringPrefix(CommandManager.Prefix, ref argPos) ||
             userMsg.HasMentionPrefix(Bot.Client.CurrentUser, ref argPos))
         {
-            if (CommandManager.Command.Search(context, argPos).IsSuccess)
+            if (CommandManager.Service.Search(context, argPos).IsSuccess)
             {
-                await CommandManager.Command.ExecuteAsync(context, argPos, CommandManager.Service);
+                await CommandManager.Service.ExecuteAsync(context, argPos, Bot.Service);
             }
         }
     }
 
-    private static async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context,
+    private static async Task OnServiceExecuted(Optional<CommandInfo> command, ICommandContext context,
         IResult result)
     {
         if (result.IsSuccess)
