@@ -59,7 +59,7 @@ public class CommandEventHandler : IEventHandler
         }
         else
         {
-            await socketContext.ReplyAsync("오류 발생!");
+            await socketContext.AddReactionAsync("⚠️");
         }
     }
 }

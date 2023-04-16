@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Scripting;
 namespace Discord.Net.Template.Commands;
 
 [Group("sudo")]
+[RequireOwner]
 public partial class SudoCommands : ModuleBase<SocketCommandContext>
 {
     [Command("run")]
