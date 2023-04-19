@@ -12,7 +12,7 @@ public class CommandEventHandler : IEventHandler
         CommandManager.Service.Log += OnLog;
 
         Bot.Client.MessageReceived += OnMessageReceived;
-        CommandManager.Service.CommandExecuted += OnServiceExecuted;
+        CommandManager.Service.CommandExecuted += OnCommandExecuted;
     }
 
     private static async Task OnLog(LogMessage message)
@@ -24,26 +24,16 @@ public class CommandEventHandler : IEventHandler
 
     private static async Task OnMessageReceived(SocketMessage message)
     {
-        if (message is not SocketUserMessage userMsg || userMsg.Content == null ||
-            userMsg.Author.Id == Bot.Client.CurrentUser.Id || userMsg.Author.IsBot)
+        if (message is not SocketUserMessage userMessage || userMessage.Content == null ||
+            userMessage.Author.Id == Bot.Client.CurrentUser.Id || userMessage.Author.IsBot)
         {
             return;
         }
 
-        SocketCommandContext context = new(Bot.Client, userMsg);
-
-        var argPos = 0;
-        if (userMsg.HasStringPrefix(CommandManager.Prefix, ref argPos) ||
-            userMsg.HasMentionPrefix(Bot.Client.CurrentUser, ref argPos))
-        {
-            if (CommandManager.Service.Search(context, argPos).IsSuccess)
-            {
-                await CommandManager.Service.ExecuteAsync(context, argPos, Bot.Service);
-            }
-        }
+        await CommandManager.ExecuteCommand(userMessage);
     }
 
-    private static async Task OnServiceExecuted(Optional<CommandInfo> command, ICommandContext context,
+    private static async Task OnCommandExecuted(Optional<CommandInfo> command, ICommandContext context,
         IResult result)
     {
         if (result.IsSuccess)

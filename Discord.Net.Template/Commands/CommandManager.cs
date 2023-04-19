@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.Net.Template.Events;
 using Discord.Net.Template.Utility;
+using Discord.WebSocket;
 
 namespace Discord.Net.Template.Commands;
 
@@ -22,5 +23,20 @@ public static class CommandManager
         await Service.AddModulesAsync(Assembly.GetEntryAssembly(), Bot.Service);
 
         CommandEventHandler.Register();
+    }
+
+    public static async Task ExecuteCommand(SocketUserMessage message)
+    {
+        SocketCommandContext context = new(Bot.Client, message);
+
+        var argPos = 0;
+        if (message.HasStringPrefix(Prefix, ref argPos) ||
+            message.HasMentionPrefix(Bot.Client.CurrentUser, ref argPos))
+        {
+            if (Service.Search(context, argPos).IsSuccess)
+            {
+                await Service.ExecuteAsync(context, argPos, Bot.Service);
+            }
+        }
     }
 }

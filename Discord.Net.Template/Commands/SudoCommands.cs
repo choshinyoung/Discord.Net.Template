@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using Discord.Commands;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Utility;
+using Discord.WebSocket;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 
@@ -30,7 +32,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
             var result = await CSharpScript.EvaluateAsync(trimmedCode,
                 ScriptOptions.Default.WithReferences(assembly).WithImports(
                     "System", "System.Collections.Generic", "System.IO", "System.Linq", "System.Net.Http",
-                    "System.Threading", "System.Threading.Tasks", "System.Diagnostics",
+                    "System.Threading", "System.Threading.Tasks", "System.Diagnostics", "System.Reflection",
                     "System.Text", "System.Text.RegularExpressions", "System.Net", "System.Numerics",
                     "Discord", "Discord.Commands", "Discord.Interactions",
                     "Discord.WebSocket", "Discord.Rest", "Discord.Net",
@@ -70,6 +72,22 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
         embed.AddField("Servers", $"{Bot.Client.Guilds.Count} servers");
 
         await Context.ReplyEmbedAsync(embed.Build());
+    }
+
+    [Command("su")]
+    public async Task Su(SocketUser user, [Remainder] string command)
+    {
+        var message = Context.Message;
+
+        var authorProperty = typeof(SocketMessage).GetField("<Author>k__BackingField",
+            BindingFlags.Instance | BindingFlags.NonPublic)!;
+        authorProperty.SetValue(message, user);
+
+        var contentProperty = typeof(SocketMessage).GetField("<Content>k__BackingField",
+            BindingFlags.Instance | BindingFlags.NonPublic)!;
+        contentProperty.SetValue(message, command);
+
+        await CommandManager.ExecuteCommand(message);
     }
 
     [Command("restart")]
