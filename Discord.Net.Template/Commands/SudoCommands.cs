@@ -114,5 +114,9 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
     [Command("restart")]
     public async Task Restart()
     {
+        await Context.ReplyAsync("Restarting...");
+
+        Process.Start(Environment.ProcessPath!);
+        Environment.Exit(0);
     }
 }
