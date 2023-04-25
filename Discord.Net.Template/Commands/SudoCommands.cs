@@ -2,6 +2,7 @@
 using System.Reflection;
 using Discord.Commands;
 using Discord.Net.Template.Extensions;
+using Discord.Net.Template.Interactions;
 using Discord.Net.Template.Utility;
 using Discord.WebSocket;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
@@ -88,6 +89,26 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
         contentProperty.SetValue(message, command);
 
         await CommandManager.ExecuteCommand(message);
+    }
+
+    [Command("reload")]
+    public async Task Reload()
+    {
+        if (InteractionManager.IsEnabled)
+        {
+            await InteractionManager.UnloadModulesAsync();
+            await InteractionManager.LoadModulesAsync();
+
+            await InteractionManager.Service.RegisterCommandsGloballyAsync();
+        }
+
+        if (CommandManager.IsEnabled)
+        {
+            await CommandManager.UnloadModulesAsync();
+            await CommandManager.LoadModulesAsync();
+        }
+
+        await Context.ReplyAsync("Reload complete.");
     }
 
     [Command("restart")]

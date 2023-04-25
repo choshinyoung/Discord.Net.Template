@@ -18,11 +18,28 @@ public static class CommandManager
 
     public static readonly CommandService Service = new(CommandConfig);
 
+    public static bool IsEnabled { get; private set; }
+
     public static async Task Initialize()
     {
-        await Service.AddModulesAsync(Assembly.GetEntryAssembly(), Bot.Service);
+        IsEnabled = true;
+
+        await LoadModulesAsync();
 
         CommandEventHandler.Register();
+    }
+
+    public static async Task LoadModulesAsync()
+    {
+        await Service.AddModulesAsync(Assembly.GetEntryAssembly(), Bot.Service);
+    }
+
+    public static async Task UnloadModulesAsync()
+    {
+        foreach (var module in Service.Modules)
+        {
+            await Service.RemoveModuleAsync(module);
+        }
     }
 
     public static async Task ExecuteCommand(SocketUserMessage message)

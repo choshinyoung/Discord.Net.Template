@@ -14,10 +14,27 @@ public static class InteractionManager
 
     public static readonly InteractionService Service = new(Bot.Client, InteractionConfig);
 
+    public static bool IsEnabled { get; private set; }
+
     public static async Task Initialize()
     {
-        await Service.AddModulesAsync(Assembly.GetEntryAssembly(), Bot.Service);
+        IsEnabled = true;
+
+        await LoadModulesAsync();
 
         InteractionEventHandler.Register();
+    }
+
+    public static async Task LoadModulesAsync()
+    {
+        await Service.AddModulesAsync(Assembly.GetEntryAssembly(), Bot.Service);
+    }
+
+    public static async Task UnloadModulesAsync()
+    {
+        foreach (var module in Service.Modules)
+        {
+            await Service.RemoveModuleAsync(module);
+        }
     }
 }
