@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.Interactions;
+using Discord.Net.Template.Extensions;
 using Discord.WebSocket;
 
 namespace Discord.Net.Template.Utility;
@@ -23,11 +24,15 @@ public static class EmbedUtility
     public static EmbedBuilder CreateEmbedFromUser(SocketUser user, object? description = null, string? title = null,
         string? imgUrl = null, string? url = null, string? thumbnailUrl = null, Color? color = null)
     {
-        return CreateEmbed(description, title, imgUrl, url, thumbnailUrl, color);
+        return CreateEmbed(description, title, imgUrl, url, thumbnailUrl, color, new EmbedFooterBuilder
+        {
+            Text = user.GetName(),
+            IconUrl = user.GetAvatar()
+        });
     }
 
     public static EmbedBuilder CreateEmbed(object? description = null, string? title = null, string? imgUrl = null,
-        string? url = null, string? thumbnailUrl = null, Color? color = null)
+        string? url = null, string? thumbnailUrl = null, Color? color = null, EmbedFooterBuilder? footer = null)
     {
         return new EmbedBuilder
         {
@@ -36,7 +41,8 @@ public static class EmbedUtility
             Description = description?.ToString(),
             ImageUrl = imgUrl,
             Url = url,
-            ThumbnailUrl = thumbnailUrl
+            ThumbnailUrl = thumbnailUrl,
+            Footer = footer
         };
     }
 
