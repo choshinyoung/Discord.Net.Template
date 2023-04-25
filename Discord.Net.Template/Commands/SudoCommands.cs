@@ -51,7 +51,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
         }
         catch (Exception e)
         {
-            await Context.ReplyAsFileAsync($"오류 발생!\n```{e}```");
+            await Context.ReplyAsFileAsync($"Error Occured!\n```{e}```");
         }
     }
 

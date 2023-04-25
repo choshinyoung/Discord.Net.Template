@@ -45,7 +45,7 @@ public class CommandEventHandler : IEventHandler
 
         if (Bot.IsDebugMode)
         {
-            await socketContext.ReplyAsync($"오류 발생!\n```{result.ErrorReason}```");
+            await socketContext.ReplyAsync($"Error Occured!\n```{result.ErrorReason}```");
         }
         else
         {

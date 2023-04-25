@@ -50,16 +50,16 @@ public class InteractionEventHandler : IEventHandler
 
         if (result is { IsSuccess: false, Error: InteractionCommandError.UnmetPrecondition })
         {
-            await socketContext.RespondAsync("권한이 없어서 커맨드를 실행할 수 없어요", true);
+            await socketContext.RespondAsync("You don't have permission to execute this command", true);
         }
 
         if (Bot.IsDebugMode)
         {
-            await socketContext.RespondOrFollowupAsync($"오류 발생!\n```{result.ErrorReason}```", true);
+            await socketContext.RespondOrFollowupAsync($"Error Occured!\n```{result.ErrorReason}```", true);
         }
         else
         {
-            await socketContext.RespondOrFollowupAsync("오류 발생!", true);
+            await socketContext.RespondOrFollowupAsync("Error Occured!", true);
         }
     }
 }
