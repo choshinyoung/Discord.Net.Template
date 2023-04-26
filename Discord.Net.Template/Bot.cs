@@ -2,6 +2,7 @@
 using Discord.Net.Template.Interactions;
 using Discord.Net.Template.Utility;
 using Discord.WebSocket;
+using Fergun.Interactive;
 using Microsoft.Extensions.DependencyInjection;
 using EventHandler = Discord.Net.Template.Events.EventHandler;
 
@@ -21,6 +22,7 @@ public static class Bot
 
     public static readonly IServiceProvider Service = new ServiceCollection()
         .AddSingleton(Client)
+        .AddSingleton<InteractiveService>()
         .AddSingleton(InteractionManager.Service)
         .AddSingleton(CommandManager.Service)
         .BuildServiceProvider();

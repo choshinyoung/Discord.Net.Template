@@ -13,7 +13,6 @@ To use this template, follow these steps:
 | Command                | ✅          | Classic Text Commands                                                                                          |
 | Slash Command          | ✅          | Command with interactions                                                                                      |
 | Hot Reload             | ⚠️         | Reload command modules automatically when Hot Reload triggered<br/>(Doesn't work for removing existing module) |
-| WaitFor                | ❌          | Methods that wait for user interactions                                                                        |
 
 ### Commands
 
