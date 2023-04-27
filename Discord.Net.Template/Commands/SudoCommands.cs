@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using Discord.Commands;
+using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Interactions;
 using Discord.Net.Template.Utility;
@@ -11,11 +12,13 @@ using Microsoft.CodeAnalysis.Scripting;
 namespace Discord.Net.Template.Commands;
 
 [Group("sudo")]
+[Order(2)]
 [RequireOwner]
 public class SudoCommands : ModuleBase<SocketCommandContext>
 {
     [Command("run")]
     [Alias("eval", "execute")]
+    [Summary("Runs C# code")]
     public async Task Execute([Remainder] string code)
     {
         var regex = StringUtility.CodeRegex();
@@ -57,6 +60,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
 
     [Command("status")]
     [Alias("info")]
+    [Summary("Checks the bots information")]
     public async Task Status()
     {
         var process = Process.GetCurrentProcess();
@@ -76,6 +80,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
     }
 
     [Command("su")]
+    [Summary("Simulates a command as if the targeted user is using it.")]
     public async Task Su(SocketUser user, [Remainder] string command)
     {
         var message = Context.Message;
@@ -92,6 +97,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
     }
 
     [Command("reload")]
+    [Summary("Reloads command modules")]
     public async Task Reload()
     {
         if (InteractionManager.IsEnabled)
@@ -112,6 +118,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
     }
 
     [Command("restart")]
+    [Summary("Restarts program")]
     public async Task Restart()
     {
         await Context.ReplyAsync("Restarting...");
