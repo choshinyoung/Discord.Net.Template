@@ -1,22 +1,29 @@
-﻿using Discord.Commands;
+﻿using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
+using Discord.Net.Template.Interactions.AutoCompletes;
 using Discord.Net.Template.Utility;
 using Fergun.Interactive;
 using Fergun.Interactive.Pagination;
 
-namespace Discord.Net.Template.Commands;
+namespace Discord.Net.Template.Interactions;
 
 [Order(1)]
-public class Help : ModuleBase<SocketCommandContext>
+public class Help : InteractionModuleBase<SocketInteractionContext>
 {
     public InteractiveService Interactive { get; set; }
 
-    [Command("help")]
-    [Summary("List of commands")]
-    public async Task CommandList()
+    [SlashCommand("help", "List of slash commands")]
+    public async Task HelpCommand([Autocomplete(typeof(SlashCommandNameAutoComplete))] string? commandName = null)
     {
-        var modules = GetCommandModules();
+        if (!string.IsNullOrEmpty(commandName))
+        {
+            await Command(commandName);
+
+            return;
+        }
+
+        var modules = GetSlashCommandModules();
 
         var paginator = new LazyPaginatorBuilder()
             .AddUser(Context.User)
@@ -29,14 +36,14 @@ public class Help : ModuleBase<SocketCommandContext>
             .WithCacheLoadedPages(false)
             .Build();
 
-        await Interactive.SendPaginatorAsync(paginator, Context.Channel, TimeSpan.FromMinutes(10));
+        await Interactive.SendPaginatorAsync(paginator, Context.Interaction, TimeSpan.FromMinutes(10));
 
         PageBuilder GeneratePage(int index)
         {
-            var page = EmbedUtility.CreatePage(Context, title: modules[index].Name);
+            var page = EmbedUtility.CreatePage(Context, title: modules[index].SlashGroupName ?? modules[index].Name);
 
-            var commands = modules[index].Commands
-                .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary))
+            var commands = modules[index].SlashCommands
+                .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Description))
                 .DistinctBy(c => c.Name)
                 .ToList();
 
@@ -45,32 +52,30 @@ public class Help : ModuleBase<SocketCommandContext>
                 var parameters = string.Join(' ',
                     command.Parameters
                         .Where(p => p.Name != "")
-                        .Select(p => $"`{p.Name}`"));
+                        .Select(p => p.IsRequired ? $"`{p.Name}`" : $"`[{p.Name}]`"));
 
                 page.AddField(
-                    $"{CommandManager.Prefix}{GetFullCommandName(command)} {parameters}",
-                    command.Summary.Split('\n')[0]);
+                    $"/{GetFullCommandName(command)} {parameters}",
+                    command.Description.Split('\n')[0]);
             }
 
             return page;
         }
     }
 
-    [Command("help")]
-    [Summary("Checks description for specific commands")]
-    public async Task Command([Remainder] [Name("command")] string commandName)
+    public async Task Command(string commandName)
     {
-        var modules = GetCommandModules();
+        var modules = GetSlashCommandModules();
 
         var commands = modules
-            .SelectMany(GetCommandsFromModule)
-            .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary))
+            .SelectMany(GetSlashCommandsFromModule)
+            .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Description))
             .Where(c => c.Name == commandName || GetFullCommandName(c) == commandName)
             .ToList();
 
         if (!commands.Any())
         {
-            await Context.ReplyAsync("Cannot find matching commands");
+            await Context.RespondAsync("Cannot find matching commands", true);
 
             return;
         }
@@ -79,37 +84,33 @@ public class Help : ModuleBase<SocketCommandContext>
 
         foreach (var command in commands)
         {
-            var aliases = string.Join(" ",
-                command.Aliases
-                    .Where(a => a != command.Name && a != GetFullCommandName(command))
-                    .Select(a => $"`{CommandManager.Prefix}{a}`"));
-
             var parameters = string.Join(' ',
                 command.Parameters
                     .Where(p => p.Name != "")
                     .Select(p => $"`{p.Name}`"));
 
             embed.AddField(
-                $"{CommandManager.Prefix}{GetFullCommandName(command)} {parameters}",
-                $"{aliases}\n\n{command.Summary}");
+                $"/{GetFullCommandName(command)} {parameters}",
+                command.Description);
         }
 
-        await Context.ReplyEmbedAsync(embed.Build());
+        await Context.RespondEmbedAsync(embed.Build());
     }
 
-    private static List<ModuleInfo> GetCommandModules()
+    public static List<ModuleInfo> GetSlashCommandModules()
     {
-        List<ModuleInfo> modules = CommandManager.Service.Modules
-            .Where(m => !m.IsSubmodule && !InfoUtility.HaveAttribute<HideInHelpAttribute>(m))
+        List<ModuleInfo> modules = InteractionManager.Service.Modules
+            .Where(m => !m.IsTopLevelGroup && !InfoUtility.HaveAttribute<HideInHelpAttribute>(m))
             .ToList();
         modules.Sort((m1, m2) => GetOrder(m1).CompareTo(GetOrder(m2)));
 
         return modules;
     }
 
-    private static List<CommandInfo> GetCommandsFromModule(ModuleInfo module)
+    public static List<SlashCommandInfo> GetSlashCommandsFromModule(ModuleInfo module)
     {
-        return module.Commands.Concat(module.Submodules.OrderBy(GetOrder).SelectMany(GetCommandsFromModule)).ToList();
+        return module.SlashCommands.Concat(module.SubModules.OrderBy(GetOrder).SelectMany(GetSlashCommandsFromModule))
+            .ToList();
     }
 
     private static int GetOrder(ModuleInfo module)
@@ -119,13 +120,13 @@ public class Help : ModuleBase<SocketCommandContext>
             : int.MaxValue;
     }
 
-    private static string GetFullCommandName(CommandInfo command)
+    public static string GetFullCommandName(ICommandInfo command)
     {
         return $"{GetParentName(command.Module)} {command.Name}".Trim();
     }
 
     private static string GetParentName(ModuleInfo? module)
     {
-        return module is null ? "" : $"{GetParentName(module.Parent)} {module.Group}".Trim();
+        return module is null ? "" : $"{GetParentName(module.Parent)} {module.SlashGroupName}".Trim();
     }
 }
