@@ -26,4 +26,4 @@ To use this template, follow these steps:
 | sudo sh           | ❌          | Executes terminal command line                                          |
 | Temporary Command | ❌          | Builds temporary command on runtime                                     |
 | Git               | ❌          | Git supports                                                            |
-| help              | ❌          | Simple Attribute Structure for Help Command automation                  |
+| help              | ✅          | Automated Help command                                                  |
