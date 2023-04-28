@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.Net.Template.Attributes;
+using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Utility;
 using Fergun.Interactive;
 using Fergun.Interactive.Pagination;
@@ -41,13 +42,59 @@ public class Help : ModuleBase<SocketCommandContext>
 
             foreach (var command in commands)
             {
+                var parameters = string.Join(' ',
+                    command.Parameters
+                        .Where(p => p.Name != "")
+                        .Select(p => $"`{p.Name}`"));
+
                 page.AddField(
-                    $"{CommandManager.Prefix}{GetFullCommandName(command)} {string.Join(' ', command.Parameters.Where(p => p.Name != "").Select(p => $"`{p.Name}`"))}",
+                    $"{CommandManager.Prefix}{GetFullCommandName(command)} {parameters}",
                     command.Summary.Split('\n')[0]);
             }
 
             return page;
         }
+    }
+
+    [Command("help")]
+    [Summary("Checks description for specific commands")]
+    public async Task Command([Remainder] [Name("command")] string commandName)
+    {
+        var modules = GetCommandModules();
+
+        var commands = modules
+            .SelectMany(m => m.Commands)
+            .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary))
+            .Where(c => c.Name == commandName || GetFullCommandName(c) == commandName)
+            .ToList();
+
+        if (!commands.Any())
+        {
+            await Context.ReplyAsync("Cannot find matching commands");
+
+            return;
+        }
+
+        var embed = EmbedUtility.CreateEmbed(title: $"`{commandName}` commands");
+
+        foreach (var command in commands)
+        {
+            var aliases = string.Join(" ",
+                command.Aliases
+                    .Where(a => a != command.Name && a != GetFullCommandName(command))
+                    .Select(a => $"`{CommandManager.Prefix}{a}`"));
+
+            var parameters = string.Join(' ',
+                command.Parameters
+                    .Where(p => p.Name != "")
+                    .Select(p => $"`{p.Name}`"));
+
+            embed.AddField(
+                $"{CommandManager.Prefix}{GetFullCommandName(command)} {parameters}",
+                $"{aliases}\n\n{command.Summary}");
+        }
+
+        await Context.ReplyEmbedAsync(embed.Build());
     }
 
     private static List<ModuleInfo> GetCommandModules()
@@ -85,10 +132,10 @@ public class Help : ModuleBase<SocketCommandContext>
     private static string GetFullCommandName(CommandInfo command)
     {
         return $"{GetParentName(command.Module)} {command.Name}".Trim();
+    }
 
-        string GetParentName(ModuleInfo? module)
-        {
-            return module is null ? "" : $"{module.Group} {GetParentName(module.Parent)}".Trim();
-        }
+    private static string GetParentName(ModuleInfo? module)
+    {
+        return module is null ? "" : $"{module.Group} {GetParentName(module.Parent)}".Trim();
     }
 }

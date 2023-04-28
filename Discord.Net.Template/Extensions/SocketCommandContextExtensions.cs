@@ -40,7 +40,7 @@ public static class SocketCommandContextExtensions
     public static async Task<RestUserMessage> ReplyEmbedAsync(this SocketCommandContext context, object content,
         bool disableMention = true, MessageComponent? component = null)
     {
-        var emb = EmbedUtility.CreateEmbedFromContext(context, content.ToString()).Build();
+        var emb = EmbedUtility.CreateEmbed(context, content.ToString()).Build();
 
         return await context.Channel.SendMessageAsync(embed: emb,
             allowedMentions: disableMention ? AllowedMentions.None : null,

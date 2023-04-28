@@ -43,7 +43,7 @@ public static class SocketInteractionContextExtensions
     public static async Task RespondEmbedAsync(this SocketInteractionContext context, object content,
         bool ephemeral = false, bool disableMention = true, MessageComponent? component = null)
     {
-        var emb = EmbedUtility.CreateEmbedFromContext(context, content.ToString()).Build();
+        var emb = EmbedUtility.CreateEmbed(context, content.ToString()).Build();
 
         await context.Interaction.RespondAsync(embed: emb, ephemeral: ephemeral,
             allowedMentions: disableMention ? AllowedMentions.None : null, components: component);

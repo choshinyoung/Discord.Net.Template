@@ -65,7 +65,7 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
     {
         var process = Process.GetCurrentProcess();
 
-        var embed = EmbedUtility.CreateEmbedFromContext(Context, title: $"{Bot.Client.CurrentUser.Username} Status");
+        var embed = EmbedUtility.CreateEmbed(Context, $"{Bot.Client.CurrentUser.Username} Status");
 
         embed.AddField("Version", Config.Get("VERSION"), true);
         embed.AddField("Uptime", $"<t:{((DateTimeOffset)process.StartTime).ToUnixTimeSeconds()}:R>", true);
