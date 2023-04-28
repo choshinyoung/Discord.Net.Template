@@ -27,3 +27,7 @@ To use this template, follow these steps:
 | Temporary Command | ❌          | Builds temporary command on runtime                                     |
 | Git               | ❌          | Git supports                                                            |
 | help              | ✅          | Automated Help command                                                  |
+
+### Libraries
+
+This template uses [Fergun.Interactive](https://github.com/d4n3436/Fergun.Interactive) library for paginator and other features.
