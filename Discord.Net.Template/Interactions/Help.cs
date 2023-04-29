@@ -100,7 +100,7 @@ public class Help : InteractionModuleBase<SocketInteractionContext>
     public static List<ModuleInfo> GetSlashCommandModules()
     {
         List<ModuleInfo> modules = InteractionManager.Service.Modules
-            .Where(m => !m.IsTopLevelGroup && !InfoUtility.HaveAttribute<HideInHelpAttribute>(m))
+            .Where(m => !m.IsSubModule && !InfoUtility.HaveAttribute<HideInHelpAttribute>(m))
             .ToList();
         modules.Sort((m1, m2) => GetOrder(m1).CompareTo(GetOrder(m2)));
 
