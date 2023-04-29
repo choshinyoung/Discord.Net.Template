@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Discord.Commands;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
@@ -81,6 +82,42 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
         await Context.ReplyEmbedAsync(embed.Build());
     }
 
+    [Command("sh")]
+    [Alias("shell", "bash", "cmd")]
+    [Summary("Executes command line on terminal")]
+    public async Task Shell([Remainder] string commandLine)
+    {
+        var isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+        using var process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = isWindows ? "cmd.exe" : "bash",
+                Arguments = isWindows ? $"/c {commandLine}" : string.Empty,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            }
+        };
+        process.Start();
+
+        if (!isWindows)
+        {
+            await process.StandardInput.WriteLineAsync(commandLine);
+            await process.StandardInput.FlushAsync();
+
+            process.StandardInput.Close();
+        }
+
+        await process.WaitForExitAsync();
+
+        var result = await process.StandardOutput.ReadToEndAsync();
+
+        await Context.ReplyAsFileAsync($"```{result}```");
+    }
+
     [Command("su")]
     [Summary("Simulates a command as if the targeted user is using it.")]
     public async Task Su(SocketUser user, [Remainder] string command)
@@ -117,15 +154,5 @@ public class SudoCommands : ModuleBase<SocketCommandContext>
         }
 
         await Context.ReplyAsync("Reload complete.");
-    }
-
-    [Command("restart")]
-    [Summary("Restarts program")]
-    public async Task Restart()
-    {
-        await Context.ReplyAsync("Restarting...");
-
-        Process.Start(Environment.ProcessPath!);
-        Environment.Exit(0);
     }
 }

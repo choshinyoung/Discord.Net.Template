@@ -22,9 +22,7 @@ To use this template, follow these steps:
 | sudo status       | ✅          | Checks the bots information                                             |
 | sudo su           | ✅          | Simulates a command as if the targeted user is using it.                |
 | sudo reload       | ⚠️         | Reloads command modules<br/>(Doesn't work for removing existing module) |
-| sudo restart      | ✅          | Restarts program                                                        |
-| sudo sh           | ❌          | Executes terminal command line                                          |
-| Git               | ❌          | Git supports                                                            |
+| sudo sh           | ✅          | Executes command line on terminal                                       |
 | help              | ✅          | Automated Help command                                                  |
 
 ### Libraries
