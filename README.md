@@ -24,7 +24,6 @@ To use this template, follow these steps:
 | sudo reload       | ⚠️         | Reloads command modules<br/>(Doesn't work for removing existing module) |
 | sudo restart      | ✅          | Restarts program                                                        |
 | sudo sh           | ❌          | Executes terminal command line                                          |
-| Temporary Command | ❌          | Builds temporary command on runtime                                     |
 | Git               | ❌          | Git supports                                                            |
 | help              | ✅          | Automated Help command                                                  |
 
