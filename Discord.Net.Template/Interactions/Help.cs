@@ -11,7 +11,7 @@ namespace Discord.Net.Template.Interactions;
 [Order(1)]
 public class Help : InteractionModuleBase<SocketInteractionContext>
 {
-    public InteractiveService Interactive { get; set; }
+    public InteractiveService? Interactive { get; set; }
 
     [SlashCommand("help", "List of slash commands")]
     public async Task HelpCommand([Autocomplete(typeof(SlashCommandNameAutoComplete))] string? commandName = null)
@@ -36,7 +36,7 @@ public class Help : InteractionModuleBase<SocketInteractionContext>
             .WithCacheLoadedPages(false)
             .Build();
 
-        await Interactive.SendPaginatorAsync(paginator, Context.Interaction, TimeSpan.FromMinutes(10));
+        await Interactive!.SendPaginatorAsync(paginator, Context.Interaction, TimeSpan.FromMinutes(10));
 
         PageBuilder GeneratePage(int index)
         {

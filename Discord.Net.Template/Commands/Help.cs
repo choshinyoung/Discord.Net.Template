@@ -10,7 +10,7 @@ namespace Discord.Net.Template.Commands;
 [Order(1)]
 public class Help : ModuleBase<SocketCommandContext>
 {
-    public InteractiveService Interactive { get; set; }
+    public InteractiveService? Interactive { get; set; }
 
     [Command("help")]
     [Summary("List of commands")]
@@ -29,7 +29,7 @@ public class Help : ModuleBase<SocketCommandContext>
             .WithCacheLoadedPages(false)
             .Build();
 
-        await Interactive.SendPaginatorAsync(paginator, Context.Channel, TimeSpan.FromMinutes(10));
+        await Interactive!.SendPaginatorAsync(paginator, Context.Channel, TimeSpan.FromMinutes(10));
 
         PageBuilder GeneratePage(int index)
         {

@@ -6,7 +6,7 @@ namespace Discord.Net.Template.Interactions.AutoCompletes;
 
 public class SlashCommandNameAutoComplete : AutocompleteHandler
 {
-    public override async Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context,
+    public override Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context,
         IAutocompleteInteraction autocompleteInteraction,
         IParameterInfo parameter, IServiceProvider services)
     {
@@ -18,7 +18,7 @@ public class SlashCommandNameAutoComplete : AutocompleteHandler
             .DistinctBy(Help.GetFullCommandName)
             .ToList();
 
-        return AutocompletionResult.FromSuccess(commands.Select(c =>
-            new AutocompleteResult(Help.GetFullCommandName(c), Help.GetFullCommandName(c))));
+        return Task.FromResult(AutocompletionResult.FromSuccess(commands.Select(c =>
+            new AutocompleteResult(Help.GetFullCommandName(c), Help.GetFullCommandName(c)))));
     }
 }
