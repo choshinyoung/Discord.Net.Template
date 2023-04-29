@@ -1,5 +1,4 @@
 ﻿using Discord.Commands;
-using Discord.Net.Template.Utility;
 using Discord.Rest;
 
 namespace Discord.Net.Template.Extensions;
@@ -18,9 +17,7 @@ public static class SocketCommandContextExtensions
         object content, bool disableMention = true,
         MessageComponent? component = null)
     {
-        var stream = content.ToString()!.ToStream();
-
-        return await context.Channel.SendFileAsync(stream, "message.txt", title?.ToString(),
+        return await context.Channel.SendFileAsync(content.ToString()!.ToStream(), "message.txt", title?.ToString(),
             allowedMentions: disableMention ? AllowedMentions.None : null,
             messageReference: await AsReferenceAsync(context), components: component);
     }
@@ -40,17 +37,19 @@ public static class SocketCommandContextExtensions
     public static async Task<RestUserMessage> ReplyEmbedAsync(this SocketCommandContext context, object content,
         bool disableMention = true, MessageComponent? component = null)
     {
-        var emb = EmbedUtility.CreateEmbed(context, content.ToString()).Build();
+        var embed = new EmbedBuilder()
+            .WithDefaultColor()
+            .WithDescription(content.ToString()).Build();
 
-        return await context.Channel.SendMessageAsync(embed: emb,
+        return await context.Channel.SendMessageAsync(embed: embed,
             allowedMentions: disableMention ? AllowedMentions.None : null,
             messageReference: await AsReferenceAsync(context), components: component);
     }
 
-    public static async Task<RestUserMessage> ReplyEmbedAsync(this SocketCommandContext context, Embed emb,
+    public static async Task<RestUserMessage> ReplyEmbedAsync(this SocketCommandContext context, Embed embed,
         bool disableMention = true, MessageComponent? component = null)
     {
-        return await context.Channel.SendMessageAsync(embed: emb,
+        return await context.Channel.SendMessageAsync(embed: embed,
             allowedMentions: disableMention ? AllowedMentions.None : null,
             messageReference: await AsReferenceAsync(context), components: component);
     }

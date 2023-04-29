@@ -40,7 +40,9 @@ public class Help : InteractionModuleBase<SocketInteractionContext>
 
         PageBuilder GeneratePage(int index)
         {
-            var page = EmbedUtility.CreatePage(Context, title: modules[index].SlashGroupName ?? modules[index].Name);
+            var page = new PageBuilder()
+                .WithDefaultColor()
+                .WithTitle(modules[index].SlashGroupName ?? modules[index].Name);
 
             var commands = modules[index].SlashCommands
                 .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Description))
@@ -80,7 +82,9 @@ public class Help : InteractionModuleBase<SocketInteractionContext>
             return;
         }
 
-        var embed = EmbedUtility.CreateEmbed(title: $"`{commandName}` commands");
+        var embed = new EmbedBuilder()
+            .WithDefaultColor()
+            .WithTitle($"`{commandName}` commands");
 
         foreach (var command in commands)
         {

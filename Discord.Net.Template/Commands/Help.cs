@@ -33,7 +33,9 @@ public class Help : ModuleBase<SocketCommandContext>
 
         PageBuilder GeneratePage(int index)
         {
-            var page = EmbedUtility.CreatePage(Context, title: modules[index].Name);
+            var page = new PageBuilder()
+                .WithDefaultColor()
+                .WithTitle(modules[index].Name);
 
             var commands = modules[index].Commands
                 .Where(c => !InfoUtility.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary))
@@ -75,7 +77,9 @@ public class Help : ModuleBase<SocketCommandContext>
             return;
         }
 
-        var embed = EmbedUtility.CreateEmbed(title: $"`{commandName}` commands");
+        var embed = new EmbedBuilder()
+            .WithDefaultColor()
+            .WithTitle($"`{commandName}` commands");
 
         foreach (var command in commands)
         {

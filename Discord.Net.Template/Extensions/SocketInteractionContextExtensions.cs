@@ -1,5 +1,4 @@
 ﻿using Discord.Interactions;
-using Discord.Net.Template.Utility;
 
 namespace Discord.Net.Template.Extensions;
 
@@ -43,16 +42,19 @@ public static class SocketInteractionContextExtensions
     public static async Task RespondEmbedAsync(this SocketInteractionContext context, object content,
         bool ephemeral = false, bool disableMention = true, MessageComponent? component = null)
     {
-        var emb = EmbedUtility.CreateEmbed(context, content.ToString()).Build();
+        var embed = new EmbedBuilder()
+            .WithDefaultColor()
+            .WithDescription(content.ToString()).Build();
 
-        await context.Interaction.RespondAsync(embed: emb, ephemeral: ephemeral,
+        await context.Interaction.RespondAsync(embed: embed, ephemeral: ephemeral,
             allowedMentions: disableMention ? AllowedMentions.None : null, components: component);
     }
 
-    public static async Task RespondEmbedAsync(this SocketInteractionContext context, Embed emb, string? content = null,
+    public static async Task RespondEmbedAsync(this SocketInteractionContext context, Embed embed,
+        string? content = null,
         bool ephemeral = false, bool disableMention = true, MessageComponent? component = null)
     {
-        await context.Interaction.RespondAsync(content, embed: emb, ephemeral: ephemeral,
+        await context.Interaction.RespondAsync(content, embed: embed, ephemeral: ephemeral,
             allowedMentions: disableMention ? AllowedMentions.None : null, components: component);
     }
 }
