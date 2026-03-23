@@ -1,9 +1,11 @@
-﻿# Discord.Net Template Project
+﻿# Discord.Net.Template
+
+[Discord.Net](https://github.com/discord-net/Discord.Net) Template project for Dotnet 10
 
 To use this template, follow these steps:
 
 1. Clone the repository.
-2. For CLI or Visual Studio: navigate to the cloned repository location and run `dotnet new install .\ `.
+2. For CLI or Visual Studio: Navigate to the cloned repository location and run `dotnet new install .\ `.
 3. For Rider: install the template on the `More Templates` tab.
 
 ## Supports
