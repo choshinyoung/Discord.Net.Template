@@ -1,0 +1,12 @@
+{
+  "author": "choshinyoung",
+  "classifications": ["Common", "Console"],
+  "identity": "Discord.Net.Template",
+  "name": "Discord.Net Template",
+  "shortName": "dnettemplate",
+  "sourceName": "Discord.Net.Template",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}
