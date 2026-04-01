@@ -16,8 +16,6 @@ var intents =
         ?.Aggregate((a, b) => a | b)
     ?? GatewayIntents.AllUnprivileged;
 
-System.Console.WriteLine(intents);
-
 var logLevel =
     builder.Configuration.GetSection("Discord:LogSeverity")?.Get<LogSeverity>()
     ?? LogSeverity.Warning;
