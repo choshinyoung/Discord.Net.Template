@@ -6,37 +6,29 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureAppConfiguration(config =>
-        config
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build()
-    )
-    .ConfigureServices(
-        (context, services) =>
-        {
-            var intents = (context.Configuration.GetSection("Bot:Intents").Get<string[]>() ?? [])
-                .Select(Enum.Parse<GatewayIntents>)
-                .Aggregate((a, b) => a | b);
+var builder = Host.CreateApplicationBuilder(args);
 
-            var logLevel = Enum.Parse<LogSeverity>(
-                context.Configuration["Bot:LogSeverity"] ?? "Info"
-            );
+var intents =
+    builder
+        .Configuration.GetSection("Bot:Intents")
+        .Get<GatewayIntents[]>()
+        ?.Aggregate((a, b) => a | b)
+    ?? GatewayIntents.AllUnprivileged;
 
-            services.AddSingleton(
-                new DiscordSocketClient(new() { GatewayIntents = intents, LogLevel = logLevel })
-            );
+var logLevel =
+    builder.Configuration.GetSection("Bot:LogSeverity")?.Get<LogSeverity>() ?? LogSeverity.Warning;
 
-            services.AddSingleton(x => new InteractionService(
-                x.GetRequiredService<DiscordSocketClient>(),
-                new InteractionServiceConfig { DefaultRunMode = RunMode.Async, LogLevel = logLevel }
-            ));
+builder.Services.AddSingleton(
+    new DiscordSocketClient(new() { GatewayIntents = intents, LogLevel = logLevel })
+);
 
-            services.AddSingleton<IModuleHandler, InteractionHandler>();
-            services.AddHostedService<BotService>();
-        }
-    )
-    .Build();
+builder.Services.AddSingleton(x => new InteractionService(
+    x.GetRequiredService<DiscordSocketClient>(),
+    new InteractionServiceConfig { DefaultRunMode = RunMode.Async, LogLevel = logLevel }
+));
 
-await host.RunAsync();
+builder.Services.AddSingleton<IModuleHandler, InteractionHandler>();
+builder.Services.AddHostedService<BotService>();
+
+var app = builder.Build();
+await app.RunAsync();
