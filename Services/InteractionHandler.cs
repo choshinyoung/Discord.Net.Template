@@ -84,7 +84,7 @@ public class InteractionHandler(
             return;
         }
 
-        if (config.GetSection("Bot:DebugMode").Get<bool>())
+        if (config.GetSection("Discord:DebugMode").Get<bool>())
         {
             await socketContext.RespondOrFollowupAsync(
                 $"Error Occured!\n```{result.ErrorReason}```",

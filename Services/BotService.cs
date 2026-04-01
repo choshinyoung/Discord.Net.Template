@@ -23,7 +23,7 @@ public class BotService(
             await handler.InitializeAsync();
         }
 
-        await client.LoginAsync(TokenType.Bot, config["Bot:Token"]);
+        await client.LoginAsync(TokenType.Bot, config["Discord:Token"]);
         await client.StartAsync();
 
         await Task.Delay(-1, stoppingToken);
