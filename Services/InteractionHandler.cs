@@ -55,7 +55,7 @@ public class InteractionHandler(
 
     private async Task HandleInteractionCreatedAsync(SocketInteraction intr)
     {
-        var scope = services.CreateScope();
+        using var scope = services.CreateScope();
         SocketInteractionContext ctx = new(client, intr);
 
         await interaction.ExecuteCommandAsync(ctx, scope.ServiceProvider);
