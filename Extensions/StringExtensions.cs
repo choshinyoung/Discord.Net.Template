@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Discord.Net.Template.Extensions;
 
-public static class StringUtil
+public static class StringExtensions
 {
     public static string Slice(this string content, int length = 2000)
     {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Discord.Net.Template.Extensions;
 
-public static class LogUtil
+public static class LogExtensions
 {
     public static void Log(this ILogger logger, LogMessage message)
     {

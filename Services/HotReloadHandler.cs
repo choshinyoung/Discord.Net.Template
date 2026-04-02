@@ -23,10 +23,10 @@ public class HotReloadHandler
 
     private static async Task ReloadModules(IServiceProvider services)
     {
-        var moduleHandlers = services.GetRequiredService<IEnumerable<IModuleHandler>>();
+        var handlers = services.GetRequiredService<IEnumerable<IModuleHandler>>();
         var logger = services.GetRequiredService<ILogger<HotReloadHandler>>();
 
-        foreach (var handler in moduleHandlers)
+        foreach (var handler in handlers)
         {
             await handler.UnloadModulesAsync();
             await handler.LoadModulesAsync();
