@@ -42,4 +42,6 @@ builder.Services.AddSingleton<IModuleHandler, CommandHandler>();
 builder.Services.AddHostedService<BotService>();
 
 var app = builder.Build();
+HotReloadHandler.ServiceProvider = app.Services;
+
 await app.RunAsync();
