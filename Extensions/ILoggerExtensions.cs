@@ -1,10 +1,33 @@
 using Discord;
 using Microsoft.Extensions.Logging;
 
-namespace Discord.Net.Template.Utils;
+namespace Discord.Net.Template.Extensions;
 
 public static class LogUtil
 {
+    public static void Log(this ILogger logger, LogMessage message)
+    {
+        var logLevel = MapLogLevel(message.Severity);
+
+        if (logger.IsEnabled(logLevel))
+        {
+            if (message.Exception != null)
+            {
+                logger.Log(
+                    logLevel,
+                    message.Exception,
+                    "{Source}: {Message}",
+                    message.Source,
+                    message.Exception.Message
+                );
+            }
+            else
+            {
+                logger.Log(logLevel, "{Source}: {Message}", message.Source, message.Message);
+            }
+        }
+    }
+
     public static LogLevel MapLogLevel(LogSeverity severity) =>
         severity switch
         {
@@ -29,28 +52,5 @@ public static class LogUtil
             LogSeverity.Debug => LogLevel.Trace,
             _ => LogLevel.Information,
         };
-    }
-
-    public static void Log(this ILogger logger, LogMessage message)
-    {
-        var logLevel = MapLogLevel(message.Severity);
-
-        if (logger.IsEnabled(logLevel))
-        {
-            if (message.Exception != null)
-            {
-                logger.Log(
-                    logLevel,
-                    message.Exception,
-                    "{Source}: {Message}",
-                    message.Source,
-                    message.Exception.Message
-                );
-            }
-            else
-            {
-                logger.Log(logLevel, "{Source}: {Message}", message.Source, message.Message);
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Discord.Net.Template.Utils;
+namespace Discord.Net.Template.Extensions;
 
 public static class StringUtil
 {

@@ -1,7 +1,7 @@
 using Discord.Commands;
 using Discord.Rest;
 
-namespace Discord.Net.Template.Utils;
+namespace Discord.Net.Template.Extensions;
 
 public static class SocketCommandContextExtensions
 {

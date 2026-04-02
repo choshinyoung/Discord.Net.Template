@@ -1,7 +1,7 @@
 using System.Reflection;
 using Discord;
 using Discord.Interactions;
-using Discord.Net.Template.Utils;
+using Discord.Net.Template.Extensions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

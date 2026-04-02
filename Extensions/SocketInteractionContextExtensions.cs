@@ -1,7 +1,7 @@
 using Discord;
 using Discord.Interactions;
 
-namespace Discord.Net.Template.Utils;
+namespace Discord.Net.Template.Extensions;
 
 public static class SocketInteractionContextExtensions
 {

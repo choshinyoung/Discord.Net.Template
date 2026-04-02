@@ -1,6 +1,6 @@
 using Discord;
 
-namespace Discord.Net.Template.Utils;
+namespace Discord.Net.Template.Extensions;
 
 public static class EmbedBuilderExtensions
 {

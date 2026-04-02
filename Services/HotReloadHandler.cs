@@ -1,5 +1,4 @@
 using System.Reflection.Metadata;
-using Discord.Commands;
 using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

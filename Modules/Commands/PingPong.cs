@@ -1,5 +1,5 @@
 using Discord.Commands;
-using Discord.Net.Template.Utils;
+using Discord.Net.Template.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Discord.Net.Template.Modules.Commands;

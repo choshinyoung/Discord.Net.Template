@@ -1,5 +1,5 @@
 using Discord;
-using Discord.Net.Template.Utils;
+using Discord.Net.Template.Extensions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
