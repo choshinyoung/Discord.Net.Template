@@ -1,7 +1,9 @@
 using System.Reflection;
 using Discord;
 using Discord.Interactions;
+using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
+using Discord.Net.Template.Utils;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -95,5 +97,18 @@ public class InteractionHandler(
         {
             await socketContext.RespondOrFollowupAsync("Error Occured!", true);
         }
+    }
+
+    public List<ModuleInfo> GetModules()
+    {
+        List<ModuleInfo> modules =
+        [
+            .. interaction.Modules.Where(m =>
+                !m.IsSubModule && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+            ),
+        ];
+        modules.Sort((m1, m2) => m1.GetOrder().CompareTo(m2.GetOrder()));
+
+        return modules;
     }
 }
