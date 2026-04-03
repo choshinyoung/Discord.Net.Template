@@ -1,7 +1,6 @@
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
-using Discord.Net.Template.Services;
 using Discord.Net.Template.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,8 +15,8 @@ public class HelpAutoComplete : AutocompleteHandler
         IServiceProvider services
     )
     {
-        var interactionHandler = services.GetRequiredService<InteractionHandler>();
-        var modules = interactionHandler.GetModules();
+        var interaction = services.GetRequiredService<InteractionService>();
+        var modules = interaction.GetModules();
 
         var commands = modules
             .SelectMany(x => x.GetCommands())

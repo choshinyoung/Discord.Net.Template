@@ -8,6 +8,19 @@ namespace Discord.Net.Template.Extensions;
 
 public static class ModuleExtensions
 {
+    public static List<Interactions.ModuleInfo> GetModules(this InteractionService interaction)
+    {
+        List<Interactions.ModuleInfo> modules =
+        [
+            .. interaction.Modules.Where(m =>
+                !m.IsSubModule && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+            ),
+        ];
+        modules.Sort((m1, m2) => m1.GetOrder().CompareTo(m2.GetOrder()));
+
+        return modules;
+    }
+
     public static List<SlashCommandInfo> GetCommands(this Interactions.ModuleInfo module)
     {
         return
