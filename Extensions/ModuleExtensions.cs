@@ -51,4 +51,39 @@ public static class ModuleExtensions
 
         return $"{module.Parent.GetParentName()} {module.SlashGroupName}".Trim();
     }
+
+    public static List<Commands.ModuleInfo> GetModules(this CommandService command)
+    {
+        List<Commands.ModuleInfo> modules =
+        [
+            .. command.Modules.Where(m =>
+                !m.IsSubmodule && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+            ),
+        ];
+        modules.Sort((m1, m2) => GetOrder(m1).CompareTo(GetOrder(m2)));
+
+        return modules;
+    }
+
+    public static List<CommandInfo> GetCommands(this Commands.ModuleInfo module)
+    {
+        return [.. module.Commands, .. module.Submodules.OrderBy(GetOrder).SelectMany(GetCommands)];
+    }
+
+    public static int GetOrder(this Commands.ModuleInfo module)
+    {
+        return InfoUtil.HaveAttribute<OrderAttribute>(module)
+            ? InfoUtil.GetAttribute<OrderAttribute>(module).Order
+            : int.MaxValue;
+    }
+
+    public static string GetFullName(this CommandInfo command)
+    {
+        return $"{command.Module.GetParentName()} {command.Name}".Trim();
+    }
+
+    private static string GetParentName(this Commands.ModuleInfo? module)
+    {
+        return module is null ? "" : $"{module.Parent.GetParentName()} {module.Group}".Trim();
+    }
 }

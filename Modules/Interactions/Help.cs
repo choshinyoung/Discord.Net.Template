@@ -23,20 +23,13 @@ public class Help(InteractionService interaction) : InteractionModuleBase<Socket
 
         var modules = interaction.GetModules();
 
-        if (modules.Count == 0)
-        {
-            await Context.RespondAsync("No modules found", true);
-
-            return;
-        }
-
         var embed = BuildPageEmbed(modules, 0);
         var component = BuildPageButtons(Context.User.Id, 0, modules.Count);
 
         await Context.RespondEmbedAsync(embed.Build(), component: component);
     }
 
-    [ComponentInteraction("help:page:*,*")]
+    [ComponentInteraction("help:interaction:*,*")]
     public async Task HelpPageButtonClick(string userId, string pageIndex)
     {
         if (
@@ -53,13 +46,6 @@ public class Help(InteractionService interaction) : InteractionModuleBase<Socket
         }
 
         var modules = interaction.GetModules();
-
-        if (modules.Count == 0)
-        {
-            await RespondAsync("No modules found", ephemeral: true);
-
-            return;
-        }
 
         var index = Math.Clamp(targetIndex, 0, modules.Count - 1);
         var embed = BuildPageEmbed(modules, index);
@@ -120,13 +106,13 @@ public class Help(InteractionService interaction) : InteractionModuleBase<Socket
         return new ComponentBuilder()
             .WithButton(
                 "◀",
-                $"help:page:{userId},{previousIndex}",
+                $"help:interaction:{userId},{previousIndex}",
                 ButtonStyle.Primary,
                 disabled: currentIndex < 1
             )
             .WithButton(
                 "▶",
-                $"help:page:{userId},{nextIndex}",
+                $"help:interaction:{userId},{nextIndex}",
                 ButtonStyle.Primary,
                 disabled: currentIndex >= totalPages - 1
             )
