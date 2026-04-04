@@ -4,6 +4,7 @@ using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Modules.Interactions.AutoCompletes;
 using Discord.Net.Template.Utils;
+using Discord.WebSocket;
 
 namespace Discord.Net.Template.Modules.Interactions;
 
@@ -64,7 +65,12 @@ public class Help(InteractionService interaction) : InteractionModuleBase<Socket
         var embed = BuildPageEmbed(modules, index);
         var component = BuildPageButtons(ownerId, index, modules.Count);
 
-        await ModifyOriginalResponseAsync(message =>
+        if (Context.Interaction is not SocketMessageComponent messageComponent)
+        {
+            return;
+        }
+
+        await messageComponent.UpdateAsync(message =>
         {
             message.Embed = embed.Build();
             message.Components = component;
@@ -101,11 +107,6 @@ public class Help(InteractionService interaction) : InteractionModuleBase<Socket
             );
         }
 
-        if (commands.Count == 0)
-        {
-            embed.WithDescription("No visible slash commands in this module.");
-        }
-
         embed.WithFooter($"Page {index + 1}/{modules.Count}");
 
         return embed;
@@ -113,41 +114,21 @@ public class Help(InteractionService interaction) : InteractionModuleBase<Socket
 
     private static MessageComponent BuildPageButtons(ulong userId, int currentIndex, int totalPages)
     {
-        var firstIndex = 0;
-        var previousIndex = Math.Max(currentIndex - 1, 0);
-        var nextIndex = Math.Min(currentIndex + 1, totalPages - 1);
-        var lastIndex = Math.Max(totalPages - 1, 0);
+        var previousIndex = currentIndex - 1;
+        var nextIndex = currentIndex + 1;
 
         return new ComponentBuilder()
-            .WithButton(
-                "⏪",
-                $"help:page:{userId},{firstIndex}",
-                ButtonStyle.Secondary,
-                disabled: currentIndex == firstIndex
-            )
             .WithButton(
                 "◀",
                 $"help:page:{userId},{previousIndex}",
                 ButtonStyle.Primary,
-                disabled: currentIndex == firstIndex
-            )
-            .WithButton(
-                $"{currentIndex + 1}/{totalPages}",
-                "help:page:noop,0",
-                ButtonStyle.Secondary,
-                disabled: true
+                disabled: currentIndex < 1
             )
             .WithButton(
                 "▶",
                 $"help:page:{userId},{nextIndex}",
                 ButtonStyle.Primary,
-                disabled: currentIndex == lastIndex
-            )
-            .WithButton(
-                "⏩",
-                $"help:page:{userId},{lastIndex}",
-                ButtonStyle.Secondary,
-                disabled: currentIndex == lastIndex
+                disabled: currentIndex >= totalPages - 1
             )
             .Build();
     }

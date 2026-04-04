@@ -18,18 +18,21 @@ public class HelpAutoComplete : AutocompleteHandler
         var interaction = services.GetRequiredService<InteractionService>();
         var modules = interaction.GetModules();
 
-        var commands = modules
+        var userInput = autocompleteInteraction.Data.Current.Value?.ToString() ?? "";
+
+        var suggestions = modules
             .SelectMany(x => x.GetCommands())
-            .Where(c =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(c)
-                && !string.IsNullOrEmpty(c.Description)
+            .Where(x =>
+                !InfoUtil.HaveAttribute<HideInHelpAttribute>(x)
+                && !string.IsNullOrEmpty(x.Description)
+                && x.Name.Contains(userInput, StringComparison.OrdinalIgnoreCase)
             )
             .DistinctBy(x => x.GetFullName())
             .ToList();
 
         return Task.FromResult(
             AutocompletionResult.FromSuccess(
-                commands.Select(c => new AutocompleteResult(c.GetFullName(), c.GetFullName()))
+                suggestions.Select(c => new AutocompleteResult(c.GetFullName(), c.GetFullName()))
             )
         );
     }
