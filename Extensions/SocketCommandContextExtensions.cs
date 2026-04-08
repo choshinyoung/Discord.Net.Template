@@ -16,7 +16,7 @@ public static class SocketCommandContextExtensions
         return await context.Channel.SendMessageAsync(
             content.ToString(),
             allowedMentions: disableMention ? Discord.AllowedMentions.None : null,
-            messageReference: await AsReferenceAsync(context),
+            messageReference: new MessageReference(context.Message.Id),
             components: component
         );
     }
@@ -34,7 +34,7 @@ public static class SocketCommandContextExtensions
             "message.txt",
             title?.ToString(),
             allowedMentions: disableMention ? AllowedMentions.None : null,
-            messageReference: await AsReferenceAsync(context),
+            messageReference: new MessageReference(context.Message.Id),
             components: component
         );
     }
@@ -69,7 +69,7 @@ public static class SocketCommandContextExtensions
         return await context.Channel.SendMessageAsync(
             embed: embed,
             allowedMentions: disableMention ? AllowedMentions.None : null,
-            messageReference: await AsReferenceAsync(context),
+            messageReference: new MessageReference(context.Message.Id),
             components: component
         );
     }
@@ -84,7 +84,7 @@ public static class SocketCommandContextExtensions
         return await context.Channel.SendMessageAsync(
             embed: embed,
             allowedMentions: disableMention ? AllowedMentions.None : null,
-            messageReference: await AsReferenceAsync(context),
+            messageReference: new MessageReference(context.Message.Id),
             components: component
         );
     }
@@ -99,12 +99,5 @@ public static class SocketCommandContextExtensions
         {
             await context.Message.AddReactionAsync(new Emoji(emote));
         }
-    }
-
-    public static async Task<MessageReference?> AsReferenceAsync(this SocketCommandContext context)
-    {
-        return await context.Channel.GetMessageAsync(context.Message.Id) is not null
-            ? new MessageReference(context.Message.Id, context.Channel.Id, context.Guild?.Id)
-            : null;
     }
 }
