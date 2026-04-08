@@ -11,7 +11,7 @@ namespace Discord.Net.Template.Services;
 public class CommandHandler(
     DiscordSocketClient client,
     IConfiguration config,
-    ILogger<InteractionHandler> logger,
+    ILogger<CommandHandler> logger,
     IServiceProvider services,
     CommandService command
 ) : IModuleHandler

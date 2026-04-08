@@ -13,7 +13,9 @@ public static class ModuleExtensions
         List<Interactions.ModuleInfo> modules =
         [
             .. interaction.Modules.Where(m =>
-                !m.IsSubModule && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+                !m.IsSubModule
+                && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+                && m.SlashCommands.Any()
             ),
         ];
         modules.Sort((m1, m2) => m1.GetOrder().CompareTo(m2.GetOrder()));

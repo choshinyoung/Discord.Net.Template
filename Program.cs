@@ -39,6 +39,10 @@ builder.Services.AddSingleton(x => new CommandService(
 
 builder.Services.AddSingleton<IModuleHandler, InteractionHandler>();
 builder.Services.AddSingleton<IModuleHandler, CommandHandler>();
+
+builder.Services.AddSingleton<PaginatorHandler>();
+builder.Services.AddSingleton<IModuleHandler>(sp => sp.GetRequiredService<PaginatorHandler>());
+
 builder.Services.AddHostedService<BotService>();
 
 var app = builder.Build();

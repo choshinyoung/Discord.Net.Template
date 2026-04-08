@@ -2,24 +2,21 @@ using Discord;
 using Discord.Commands;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
+using Discord.Net.Template.Services;
 using Discord.Net.Template.Utils;
 
 namespace Discord.Net.Template.Modules.Commands;
 
 [Group("help")]
 [Order(1)]
-public class Help(CommandService command) : ModuleBase<SocketCommandContext>
+public class Help(CommandService command, PaginatorHandler paginator)
+    : ModuleBase<SocketCommandContext>
 {
     [Command("")]
     [Summary("List of commands")]
     public async Task HelpCommand()
     {
-        var modules = command.GetModules();
-
-        var embed = BuildPageEmbed(modules, 0);
-        var component = BuildPageButtons(Context.User.Id, 0, modules.Count);
-
-        await Context.ReplyEmbedAsync(embed.Build(), component: component);
+        await paginator.InitPaginator(Context, "help.command");
     }
 
     [Command("")]
