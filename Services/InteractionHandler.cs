@@ -1,12 +1,9 @@
 using System.Reflection;
 using Discord;
 using Discord.Interactions;
-using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
-using Discord.Net.Template.Utils;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Discord.Net.Template.Services;
