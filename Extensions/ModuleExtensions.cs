@@ -1,4 +1,3 @@
-using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
@@ -8,9 +7,11 @@ namespace Discord.Net.Template.Extensions;
 
 public static class ModuleExtensions
 {
-    public static List<Interactions.ModuleInfo> GetModules(this InteractionService interaction)
+    public static List<Discord.Interactions.ModuleInfo> GetModules(
+        this InteractionService interaction
+    )
     {
-        List<Interactions.ModuleInfo> modules =
+        List<Discord.Interactions.ModuleInfo> modules =
         [
             .. interaction.Modules.Where(m =>
                 !m.IsSubModule
@@ -23,7 +24,7 @@ public static class ModuleExtensions
         return modules;
     }
 
-    public static List<SlashCommandInfo> GetCommands(this Interactions.ModuleInfo module)
+    public static List<SlashCommandInfo> GetCommands(this Discord.Interactions.ModuleInfo module)
     {
         return
         [
@@ -32,7 +33,7 @@ public static class ModuleExtensions
         ];
     }
 
-    public static int GetOrder(this Interactions.ModuleInfo module)
+    public static int GetOrder(this Discord.Interactions.ModuleInfo module)
     {
         return InfoUtil.HaveAttribute<OrderAttribute>(module)
             ? InfoUtil.GetAttribute<OrderAttribute>(module).Order
@@ -44,7 +45,7 @@ public static class ModuleExtensions
         return $"{command.Module.GetParentName()} {command.Name}".Trim();
     }
 
-    private static string GetParentName(this Interactions.ModuleInfo? module)
+    private static string GetParentName(this Discord.Interactions.ModuleInfo? module)
     {
         if (module is null)
         {
@@ -54,9 +55,9 @@ public static class ModuleExtensions
         return $"{module.Parent.GetParentName()} {module.SlashGroupName}".Trim();
     }
 
-    public static List<Commands.ModuleInfo> GetModules(this CommandService command)
+    public static List<Discord.Commands.ModuleInfo> GetModules(this CommandService command)
     {
-        List<Commands.ModuleInfo> modules =
+        List<Discord.Commands.ModuleInfo> modules =
         [
             .. command.Modules.Where(m =>
                 !m.IsSubmodule && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
@@ -67,12 +68,12 @@ public static class ModuleExtensions
         return modules;
     }
 
-    public static List<CommandInfo> GetCommands(this Commands.ModuleInfo module)
+    public static List<CommandInfo> GetCommands(this Discord.Commands.ModuleInfo module)
     {
         return [.. module.Commands, .. module.Submodules.OrderBy(GetOrder).SelectMany(GetCommands)];
     }
 
-    public static int GetOrder(this Commands.ModuleInfo module)
+    public static int GetOrder(this Discord.Commands.ModuleInfo module)
     {
         return InfoUtil.HaveAttribute<OrderAttribute>(module)
             ? InfoUtil.GetAttribute<OrderAttribute>(module).Order
@@ -84,7 +85,7 @@ public static class ModuleExtensions
         return $"{command.Module.GetParentName()} {command.Name}".Trim();
     }
 
-    private static string GetParentName(this Commands.ModuleInfo? module)
+    private static string GetParentName(this Discord.Commands.ModuleInfo? module)
     {
         return module is null ? "" : $"{module.Parent.GetParentName()} {module.Group}".Trim();
     }

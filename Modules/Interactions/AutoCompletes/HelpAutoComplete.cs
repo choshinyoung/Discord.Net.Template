@@ -1,3 +1,4 @@
+using Discord;
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;

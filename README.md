@@ -5,8 +5,8 @@
 To use this template, follow these steps:
 
 1. Clone the repository.
-2. For CLI or Visual Studio: Navigate to the cloned repository location and run `dotnet new install .\ `.
-3. For Rider: install the template on the `More Templates` tab.
+2. Run `dotnet new install .\` to install the template.
+3. Run `dotnet new dnettemplate` to create a new Discord.Net project.
 
 ## Features
 

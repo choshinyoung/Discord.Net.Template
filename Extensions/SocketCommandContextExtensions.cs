@@ -1,3 +1,4 @@
+using Discord;
 using Discord.Commands;
 using Discord.Rest;
 
@@ -14,7 +15,7 @@ public static class SocketCommandContextExtensions
     {
         return await context.Channel.SendMessageAsync(
             content.ToString(),
-            allowedMentions: disableMention ? AllowedMentions.None : null,
+            allowedMentions: disableMention ? Discord.AllowedMentions.None : null,
             messageReference: await AsReferenceAsync(context),
             components: component
         );
