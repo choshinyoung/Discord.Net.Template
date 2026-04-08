@@ -9,16 +9,8 @@ using Microsoft.Extensions.Hosting;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-var intents =
-    builder
-        .Configuration.GetSection("Discord:Intents")
-        .Get<GatewayIntents[]>()
-        ?.Aggregate((a, b) => a | b)
-    ?? GatewayIntents.AllUnprivileged;
-
-var logLevel =
-    builder.Configuration.GetSection("Discord:LogSeverity")?.Get<LogSeverity>()
-    ?? LogSeverity.Warning;
+var intents = builder.Configuration.GetValue("Discord:Intents", GatewayIntents.AllUnprivileged);
+var logLevel = builder.Configuration.GetValue("Discord:LogSeverity", LogSeverity.Warning);
 
 builder.Services.AddSingleton(
     new DiscordSocketClient(new() { GatewayIntents = intents, LogLevel = logLevel })
