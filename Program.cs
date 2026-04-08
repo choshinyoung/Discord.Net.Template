@@ -20,14 +20,13 @@ builder.Services.AddSingleton(x => new InteractionService(
     x.GetRequiredService<DiscordSocketClient>(),
     new InteractionServiceConfig
     {
+        AutoServiceScopes = true,
         DefaultRunMode = Discord.Interactions.RunMode.Async,
         LogLevel = logLevel,
     }
 ));
 
-builder.Services.AddSingleton(x => new CommandService(
-    new() { DefaultRunMode = Discord.Commands.RunMode.Async, LogLevel = logLevel }
-));
+builder.Services.AddSingleton(x => new CommandService(new() { LogLevel = logLevel }));
 
 builder.Services.AddSingleton<IModuleHandler, InteractionHandler>();
 builder.Services.AddSingleton<IModuleHandler, CommandHandler>();

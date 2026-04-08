@@ -4,6 +4,7 @@ using Discord.Commands;
 using Discord.Net.Template.Extensions;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Discord.Net.Template.Services;
@@ -58,7 +59,7 @@ public class CommandHandler(
             return;
         }
 
-        await ExecuteCommand(userMessage);
+        _ = Task.Run(() => ExecuteCommand(userMessage));
     }
 
     private async Task HandleCommandExecutedAsync(
@@ -96,7 +97,8 @@ public class CommandHandler(
         {
             if (command.Search(context, argPos).IsSuccess)
             {
-                await command.ExecuteAsync(context, argPos, services);
+                await using AsyncServiceScope scope = services.CreateAsyncScope();
+                await command.ExecuteAsync(context, argPos, scope.ServiceProvider);
             }
         }
     }
