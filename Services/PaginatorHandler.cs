@@ -6,10 +6,12 @@ using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Modules.Paginators;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Discord.Net.Template.Services;
 
-public class PaginatorHandler(IServiceProvider services) : IModuleHandler
+public class PaginatorHandler(IServiceProvider services, ILogger<PaginatorHandler> logger)
+    : IModuleHandler
 {
     private Dictionary<string, (MethodInfo method, Type type)> paginators = [];
 
@@ -38,16 +40,35 @@ public class PaginatorHandler(IServiceProvider services) : IModuleHandler
                     continue;
                 }
 
+                if (
+                    method.ReturnType != typeof((Embed, bool))
+                    || method.GetParameters().Length != 0
+                    || attr.Id.Contains(':')
+                )
+                {
+                    logger.LogWarning(
+                        "Invalid paginator method {TypeName}.{MethodName}; skipped.",
+                        type.FullName,
+                        method.Name
+                    );
+
+                    continue;
+                }
+
                 _paginators.TryAdd(attr.Id, (method, type));
             }
         }
 
         paginators = _paginators;
+
+        await Task.CompletedTask;
     }
 
     public async Task UnloadModulesAsync()
     {
         paginators = [];
+
+        await Task.CompletedTask;
     }
 
     public async Task InitPaginator(SocketCommandContext context, string id, int index = 0)
