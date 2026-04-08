@@ -9,13 +9,13 @@ using Microsoft.Extensions.Configuration;
 namespace Discord.Net.Template.Modules.Paginators;
 
 public class Help(IConfiguration config, InteractionService interaction, CommandService command)
-    : IPaginator
+    : Paginator
 {
     [Paginator("help.interaction")]
     public (Embed, bool) HelpInteraction()
     {
         var modules = interaction.GetModules();
-        var module = modules[Index];
+        var module = modules[Math.Clamp(Index, 0, modules.Count - 1)];
 
         var embed = new EmbedBuilder()
             .WithDefaultColor()
@@ -53,7 +53,7 @@ public class Help(IConfiguration config, InteractionService interaction, Command
     public (Embed, bool) HelpCommand()
     {
         var modules = command.GetModules();
-        var module = modules[Index];
+        var module = modules[Math.Clamp(Index, 0, modules.Count - 1)];
 
         var embed = new EmbedBuilder().WithDefaultColor().WithTitle(module.Name);
 

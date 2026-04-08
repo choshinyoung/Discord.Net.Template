@@ -74,7 +74,7 @@ public class SudoCommands(
         }
         catch (Exception e)
         {
-            await Context.ReplyAsFileAsync($"Error Occured!\n```{e}```");
+            await Context.ReplyAsFileAsync($"Error Occurred!\n```{e}```");
         }
     }
 

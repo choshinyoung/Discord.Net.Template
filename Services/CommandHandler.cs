@@ -77,7 +77,7 @@ public class CommandHandler(
 
         if (config.GetValue<bool>("Discord:DebugMode"))
         {
-            await socketContext.ReplyAsync($"Error Occured!\n```{result.ErrorReason}```");
+            await socketContext.ReplyAsync($"Error Occurred!\n```{result.ErrorReason}```");
         }
         else
         {

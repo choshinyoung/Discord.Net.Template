@@ -20,10 +20,12 @@ public class PaginatorHandler(IServiceProvider services) : IModuleHandler
 
     public async Task LoadModulesAsync()
     {
+        var _paginators = new Dictionary<string, (MethodInfo method, Type type)>();
+
         var types = Assembly
             .GetExecutingAssembly()
             .GetTypes()
-            .Where(t => typeof(IPaginator).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            .Where(t => typeof(Paginator).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
         foreach (var type in types)
         {
@@ -36,9 +38,11 @@ public class PaginatorHandler(IServiceProvider services) : IModuleHandler
                     continue;
                 }
 
-                paginators.TryAdd(attr.Id, (method, type));
+                _paginators.TryAdd(attr.Id, (method, type));
             }
         }
+
+        paginators = _paginators;
     }
 
     public async Task UnloadModulesAsync()
@@ -75,7 +79,7 @@ public class PaginatorHandler(IServiceProvider services) : IModuleHandler
 
         if (paginators.TryGetValue(id, out var entry))
         {
-            if (ActivatorUtilities.CreateInstance(services, entry.type) is not IPaginator paginator)
+            if (ActivatorUtilities.CreateInstance(services, entry.type) is not Paginator paginator)
             {
                 return false;
             }

@@ -84,13 +84,13 @@ public class InteractionHandler(
         if (config.GetValue<bool>("Discord:DebugMode"))
         {
             await socketContext.RespondOrFollowupAsync(
-                $"Error Occured!\n```{result.ErrorReason}```",
+                $"Error Occurred!\n```{result.ErrorReason}```",
                 true
             );
         }
         else
         {
-            await socketContext.RespondOrFollowupAsync("Error Occured!", true);
+            await socketContext.RespondOrFollowupAsync("Error Occurred!", true);
         }
     }
 }

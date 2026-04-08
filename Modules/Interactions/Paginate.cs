@@ -7,22 +7,14 @@ namespace Discord.Net.Template.Modules.Interactions;
 public class Paginate(PaginatorHandler paginator) : InteractionModuleBase<SocketInteractionContext>
 {
     [ComponentInteraction("paginator:*:*:*")]
-    public async Task UpdatePaginator(string id, string userId, string pageIndex)
+    public async Task UpdatePaginator(string id, ulong ownerId, int index)
     {
-        if (
-            !ulong.TryParse(userId, out var ownerId)
-            || !int.TryParse(pageIndex, out var targetIndex)
-        )
+        if (Context.User.Id != ownerId || index < 0)
         {
             return;
         }
 
-        if (Context.User.Id != ownerId)
-        {
-            return;
-        }
-
-        if (paginator.TryBuildPage(id, targetIndex, out var embed, out var isLastPage))
+        if (paginator.TryBuildPage(id, index, out var embed, out var isLastPage))
         {
             if (Context.Interaction is not SocketMessageComponent component)
             {
@@ -32,12 +24,7 @@ public class Paginate(PaginatorHandler paginator) : InteractionModuleBase<Socket
             await component.UpdateAsync(x =>
             {
                 x.Embed = embed;
-                x.Components = PaginatorHandler.BuildPageButtons(
-                    id,
-                    ownerId,
-                    targetIndex,
-                    isLastPage
-                );
+                x.Components = PaginatorHandler.BuildPageButtons(id, ownerId, index, isLastPage);
             });
         }
     }
