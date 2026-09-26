@@ -126,6 +126,9 @@ public class SudoCommands(
         };
         process.Start();
 
+        var outputTask = process.StandardOutput.ReadToEndAsync();
+        var errorTask = process.StandardError.ReadToEndAsync();
+
         if (!isWindows)
         {
             await process.StandardInput.WriteLineAsync(commandLine);
@@ -136,7 +139,7 @@ public class SudoCommands(
 
         await process.WaitForExitAsync();
 
-        var result = await process.StandardOutput.ReadToEndAsync();
+        var result = await outputTask + await errorTask;
 
         await Context.ReplyAsFileAsync($"```{result}```");
     }
