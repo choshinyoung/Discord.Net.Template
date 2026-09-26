@@ -23,7 +23,7 @@ public class Paginate(PaginatorHandler paginator) : InteractionModuleBase<Socket
         if (
             index < 0
             || Context.Interaction is not SocketMessageComponent component
-            || !paginator.TryBuildPage(id, index, out var embed, out var isLastPage)
+            || await paginator.BuildPageAsync(id, index) is not ({ } embed, var isLastPage)
         )
         {
             await DeferAsync();
