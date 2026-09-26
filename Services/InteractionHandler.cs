@@ -22,7 +22,9 @@ public class InteractionHandler(
         client.Ready += HandleReadyAsync;
 
         client.InteractionCreated += HandleInteractionCreatedAsync;
-        interaction.SlashCommandExecuted += HandleSlashCommandExecutionAsync;
+        interaction.SlashCommandExecuted += HandleCommandExecutionAsync;
+        interaction.ComponentCommandExecuted += HandleCommandExecutionAsync;
+        interaction.AutocompleteHandlerExecuted += HandleAutocompleteExecutionAsync;
 
         await LoadModulesAsync();
     }
@@ -47,9 +49,25 @@ public class InteractionHandler(
         await Task.CompletedTask;
     }
 
+    public async Task RegisterCommandsAsync()
+    {
+        var testGuildId = config.GetValue<ulong>("Discord:TestGuildId");
+
+        if (config.GetValue<bool>("Discord:DebugMode") && testGuildId != 0)
+        {
+            await interaction.RegisterCommandsToGuildAsync(testGuildId);
+        }
+        else
+        {
+            await interaction.RegisterCommandsGloballyAsync();
+        }
+    }
+
     private async Task HandleReadyAsync()
     {
-        await interaction.RegisterCommandsGloballyAsync();
+        client.Ready -= HandleReadyAsync;
+
+        await RegisterCommandsAsync();
     }
 
     private async Task HandleInteractionCreatedAsync(SocketInteraction intr)
@@ -58,8 +76,8 @@ public class InteractionHandler(
         await interaction.ExecuteCommandAsync(ctx, services);
     }
 
-    private async Task HandleSlashCommandExecutionAsync(
-        SlashCommandInfo command,
+    private async Task HandleCommandExecutionAsync(
+        ICommandInfo? command,
         IInteractionContext context,
         IResult result
     )
@@ -73,7 +91,7 @@ public class InteractionHandler(
 
         if (result is { IsSuccess: false, Error: InteractionCommandError.UnmetPrecondition })
         {
-            await socketContext.RespondAsync(
+            await socketContext.RespondOrFollowupAsync(
                 "You don't have permission to execute this command.",
                 true
             );
@@ -92,5 +110,23 @@ public class InteractionHandler(
         {
             await socketContext.RespondOrFollowupAsync("Error Occurred!", true);
         }
+    }
+
+    private Task HandleAutocompleteExecutionAsync(
+        IAutocompleteHandler handler,
+        IInteractionContext context,
+        IResult result
+    )
+    {
+        if (!result.IsSuccess)
+        {
+            logger.LogWarning(
+                "Autocomplete handler {Handler} failed: {Error}",
+                handler.GetType().Name,
+                result.ErrorReason
+            );
+        }
+
+        return Task.CompletedTask;
     }
 }

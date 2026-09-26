@@ -1,12 +1,70 @@
 {
+  "$schema": "http://json.schemastore.org/template",
   "author": "choshinyoung",
   "classifications": ["Common", "Console"],
   "identity": "Discord.Net.Template",
   "name": "Discord.Net Template",
   "shortName": "dnettemplate",
   "sourceName": "Discord.Net.Template",
+  "guids": ["d1d4f100-9137-414e-bb49-f73e53e74684"],
   "tags": {
     "language": "C#",
     "type": "project"
-  }
+  },
+  "symbols": {
+    "Prefix": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "!",
+      "description": "Prefix for text commands.",
+      "replaces": "!",
+      "onlyIf": [{ "after": "\"Prefix\": \"" }]
+    },
+    "TextCommands": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Include prefix-based text commands (requires the MessageContent intent)."
+    },
+    "Sudo": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Include owner-only sudo commands (run C# code, shell, su, reload). Requires text commands."
+    },
+    "IncludeSudo": {
+      "type": "computed",
+      "value": "(Sudo && TextCommands)"
+    }
+  },
+  "sources": [
+    {
+      "exclude": [
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        ".template.config/**/*",
+        "**/*.filelist",
+        "**/*.user",
+        "**/*.lock.json",
+        ".git/**",
+        ".vs/**",
+        ".idea/**"
+      ],
+      "modifiers": [
+        {
+          "condition": "(!TextCommands)",
+          "exclude": [
+            "Modules/Commands/**",
+            "Modules/Paginators/CommandHelp.cs",
+            "Services/CommandHandler.cs",
+            "Extensions/SocketCommandContextExtensions.cs"
+          ]
+        },
+        {
+          "condition": "(!IncludeSudo)",
+          "exclude": ["Modules/Commands/Sudo.cs", "Utils/RegexUtil.cs"]
+        }
+      ]
+    }
+  ]
 }

@@ -3,13 +3,13 @@ using Discord.Commands;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Services;
-using Discord.Net.Template.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace Discord.Net.Template.Modules.Commands;
 
 [Group("help")]
 [Order(1)]
-public class Help(CommandService command, PaginatorHandler paginator)
+public class Help(IConfiguration config, CommandService command, PaginatorHandler paginator)
     : ModuleBase<SocketCommandContext>
 {
     [Command("")]
@@ -23,15 +23,7 @@ public class Help(CommandService command, PaginatorHandler paginator)
     [Summary("Checks description for specific commands")]
     public async Task HelpSingleCommand([Remainder, Name("command")] string commandName)
     {
-        var modules = command.GetModules();
-
-        var commands = modules
-            .SelectMany(x => x.GetCommands())
-            .Where(c =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary)
-            )
-            .Where(c => c.Name == commandName || c.GetFullName() == commandName)
-            .ToList();
+        var commands = command.FindHelpCommands(commandName);
 
         if (commands.Count == 0)
         {
@@ -44,12 +36,7 @@ public class Help(CommandService command, PaginatorHandler paginator)
 
         foreach (var command in commands)
         {
-            var parameters = string.Join(
-                ' ',
-                command.Parameters.Where(p => p.Name != "").Select(p => $"`{p.Name}`")
-            );
-
-            embed.AddField($"/{command.GetFullName()} {parameters}", command.Summary);
+            embed.AddField(command.GetUsage(config["Discord:Prefix"]), command.Summary);
         }
 
         await Context.ReplyEmbedAsync(embed.Build());

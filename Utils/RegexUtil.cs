@@ -4,6 +4,9 @@ namespace Discord.Net.Template.Utils;
 
 public static partial class RegexUtil
 {
-    [GeneratedRegex("^\\s*(```(cs)?\\s*(?<block_code>.+)\\s*```)|(?<code>.+)\\s*$")]
+    [GeneratedRegex(
+        "^\\s*```(?:(?:csharp|cs)\\s)?\\s*(?<block_code>.+?)\\s*```\\s*$|^\\s*(?<code>.+?)\\s*$",
+        RegexOptions.Singleline
+    )]
     public static partial Regex CodeRegex();
 }

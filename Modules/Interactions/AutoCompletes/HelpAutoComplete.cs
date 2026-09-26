@@ -1,8 +1,6 @@
 using Discord;
 using Discord.Interactions;
-using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
-using Discord.Net.Template.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Discord.Net.Template.Modules.Interactions.AutoCompletes;
@@ -24,11 +22,11 @@ public class HelpAutoComplete : AutocompleteHandler
         var suggestions = modules
             .SelectMany(x => x.GetCommands())
             .Where(x =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(x)
-                && !string.IsNullOrEmpty(x.Description)
+                x.IsVisibleInHelp()
                 && x.Name.Contains(userInput, StringComparison.OrdinalIgnoreCase)
             )
             .DistinctBy(x => x.GetFullName())
+            .Take(25)
             .ToList();
 
         return Task.FromResult(

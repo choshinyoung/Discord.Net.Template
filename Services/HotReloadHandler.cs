@@ -1,5 +1,4 @@
 using System.Reflection.Metadata;
-using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -32,8 +31,7 @@ public class HotReloadHandler
             await handler.LoadModulesAsync();
         }
 
-        var interactionService = services.GetRequiredService<InteractionService>();
-        await interactionService.RegisterCommandsGloballyAsync();
+        await services.GetRequiredService<InteractionHandler>().RegisterCommandsAsync();
 
         logger.LogInformation("Hot Reload completed successfully.");
     }

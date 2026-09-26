@@ -1,6 +1,8 @@
 using System.Reflection;
 using Discord;
+//#if (TextCommands)
 using Discord.Commands;
+//#endif
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
@@ -41,7 +43,10 @@ public class PaginatorHandler(IServiceProvider services, ILogger<PaginatorHandle
                 }
 
                 if (
-                    method.ReturnType != typeof((Embed, bool))
+                    (
+                        method.ReturnType != typeof((Embed, bool))
+                        && method.ReturnType != typeof(Task<(Embed, bool)>)
+                    )
                     || method.GetParameters().Length != 0
                     || attr.Id.Contains(':')
                 )
@@ -71,55 +76,57 @@ public class PaginatorHandler(IServiceProvider services, ILogger<PaginatorHandle
         await Task.CompletedTask;
     }
 
+    //#if (TextCommands)
     public async Task InitPaginator(SocketCommandContext context, string id, int index = 0)
     {
-        if (TryBuildPage(id, index, out var embed, out var isLastPage))
+        if (await BuildPageAsync(id, index) is ({ } embed, var isLastPage))
         {
             await context.ReplyEmbedAsync(
-                embed!,
+                embed,
                 component: BuildPageButtons(id, context.User.Id, index, isLastPage)
             );
         }
     }
+
+    //#endif
 
     public async Task InitPaginator(SocketInteractionContext context, string id, int index = 0)
     {
-        if (TryBuildPage(id, index, out var embed, out var isLastPage))
+        if (await BuildPageAsync(id, index) is ({ } embed, var isLastPage))
         {
             await context.RespondEmbedAsync(
-                embed!,
+                embed,
                 component: BuildPageButtons(id, context.User.Id, index, isLastPage)
             );
         }
     }
 
-    public bool TryBuildPage(string id, int index, out Embed? embed, out bool isLastPage)
+    public async Task<(Embed Embed, bool IsLastPage)?> BuildPageAsync(string id, int index)
     {
-        embed = null;
-        isLastPage = false;
-
-        if (paginators.TryGetValue(id, out var entry))
+        if (!paginators.TryGetValue(id, out var entry))
         {
-            if (ActivatorUtilities.CreateInstance(services, entry.type) is not Paginator paginator)
-            {
-                return false;
-            }
-
-            paginator.Id = id;
-            paginator.Index = index;
-
-            if (entry.method.Invoke(paginator, null) is not (Embed _embed, bool _isLastPage))
-            {
-                return false;
-            }
-
-            embed = _embed;
-            isLastPage = _isLastPage;
-
-            return true;
+            return null;
         }
 
-        return false;
+        await using var scope = services.CreateAsyncScope();
+
+        if (
+            ActivatorUtilities.CreateInstance(scope.ServiceProvider, entry.type)
+            is not Paginator paginator
+        )
+        {
+            return null;
+        }
+
+        paginator.Id = id;
+        paginator.Index = index;
+
+        return entry.method.Invoke(paginator, null) switch
+        {
+            Task<(Embed, bool)> task => await task,
+            (Embed embed, bool isLastPage) => (embed, isLastPage),
+            _ => null,
+        };
     }
 
     public static MessageComponent BuildPageButtons(

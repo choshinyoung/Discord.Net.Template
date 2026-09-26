@@ -39,18 +39,4 @@ public static class LogExtensions
             LogSeverity.Debug => LogLevel.Trace,
             _ => LogLevel.Information,
         };
-
-    public static LogLevel MapLogSeverity(LogSeverity severity)
-    {
-        return severity switch
-        {
-            LogSeverity.Critical => LogLevel.Critical,
-            LogSeverity.Error => LogLevel.Error,
-            LogSeverity.Warning => LogLevel.Warning,
-            LogSeverity.Info => LogLevel.Information,
-            LogSeverity.Verbose => LogLevel.Debug,
-            LogSeverity.Debug => LogLevel.Trace,
-            _ => LogLevel.Information,
-        };
-    }
 }

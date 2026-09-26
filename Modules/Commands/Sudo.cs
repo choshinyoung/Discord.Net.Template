@@ -21,9 +21,11 @@ public class SudoCommands(
     DiscordSocketClient client,
     IConfiguration config,
     IEnumerable<IModuleHandler> handlers,
-    Discord.Interactions.InteractionService interaction
+    InteractionHandler interactionHandler
 ) : ModuleBase<SocketCommandContext>
 {
+    private static readonly TimeSpan ShellTimeout = TimeSpan.FromSeconds(30);
+
     [Command("run")]
     [Alias("eval", "execute")]
     [Summary("Runs C# code")]
@@ -126,17 +128,40 @@ public class SudoCommands(
         };
         process.Start();
 
+        var outputTask = process.StandardOutput.ReadToEndAsync();
+        var errorTask = process.StandardError.ReadToEndAsync();
+
         if (!isWindows)
         {
             await process.StandardInput.WriteLineAsync(commandLine);
             await process.StandardInput.FlushAsync();
+        }
 
-            process.StandardInput.Close();
+        process.StandardInput.Close();
+
+        var timedOut = false;
+
+        using (var timeout = new CancellationTokenSource(ShellTimeout))
+        {
+            try
+            {
+                await process.WaitForExitAsync(timeout.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                process.Kill(entireProcessTree: true);
+                timedOut = true;
+            }
         }
 
         await process.WaitForExitAsync();
 
-        var result = await process.StandardOutput.ReadToEndAsync();
+        var result = await outputTask + await errorTask;
+
+        if (timedOut)
+        {
+            result += $"\nTimed out after {ShellTimeout.TotalSeconds} seconds.";
+        }
 
         await Context.ReplyAsFileAsync($"```{result}```");
     }
@@ -177,7 +202,7 @@ public class SudoCommands(
             await handler.LoadModulesAsync();
         }
 
-        await interaction.RegisterCommandsGloballyAsync();
+        await interactionHandler.RegisterCommandsAsync();
 
         await Context.ReplyAsync("Reload complete.");
     }
