@@ -1,4 +1,5 @@
 using Discord.Interactions;
+using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Services;
 using Discord.WebSocket;
 
@@ -9,23 +10,31 @@ public class Paginate(PaginatorHandler paginator) : InteractionModuleBase<Socket
     [ComponentInteraction("paginator:*:*:*")]
     public async Task UpdatePaginator(string id, ulong ownerId, int index)
     {
-        if (Context.User.Id != ownerId || index < 0)
+        if (Context.User.Id != ownerId)
         {
+            await Context.RespondAsync(
+                "Only the user who ran this command can use these buttons.",
+                true
+            );
+
             return;
         }
 
-        if (paginator.TryBuildPage(id, index, out var embed, out var isLastPage))
+        if (
+            index < 0
+            || Context.Interaction is not SocketMessageComponent component
+            || !paginator.TryBuildPage(id, index, out var embed, out var isLastPage)
+        )
         {
-            if (Context.Interaction is not SocketMessageComponent component)
-            {
-                return;
-            }
+            await DeferAsync();
 
-            await component.UpdateAsync(x =>
-            {
-                x.Embed = embed;
-                x.Components = PaginatorHandler.BuildPageButtons(id, ownerId, index, isLastPage);
-            });
+            return;
         }
+
+        await component.UpdateAsync(x =>
+        {
+            x.Embed = embed;
+            x.Components = PaginatorHandler.BuildPageButtons(id, ownerId, index, isLastPage);
+        });
     }
 }
