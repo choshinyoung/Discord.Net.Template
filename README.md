@@ -39,8 +39,6 @@ dotnet new dnettemplate -n MyBot --text-commands false
 
 ### 4. Configure the token
 
-Keep the token out of `appsettings.json` so it never gets committed.
-
 For local development, use [User Secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets). They're stored outside the project folder and loaded when running with the included launch profile (`DOTNET_ENVIRONMENT=Development`):
 
 ```sh
@@ -72,7 +70,7 @@ All settings live under the `Discord` section of `appsettings.json` and can be o
 
 | key           | description                                                                                         |
 |---------------|-----------------------------------------------------------------------------------------------------|
-| `Token`       | Bot token. Set it with user secrets or an environment variable, not in `appsettings.json`           |
+| `Token`       | Bot token                                                                                           |
 | `Prefix`      | Prefix for text commands                                                                            |
 | `Intents`     | Gateway intents, e.g. `AllUnprivileged, MessageContent` (defaults to `AllUnprivileged`)             |
 | `DebugMode`   | Shows detailed error messages in replies, and enables test guild registration                       |
