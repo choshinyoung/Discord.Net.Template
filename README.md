@@ -66,7 +66,7 @@ Global slash commands can take a while to show up. While developing, set `Discor
 
 ## Configuration
 
-All settings live under the `Discord` section of `appsettings.json` and can be overridden with user secrets or environment variables (`Discord__<Key>`).
+All settings live under the `Discord` section. `Token` is set with user secrets or environment variables (see above); the rest are in `appsettings.json` and can be overridden the same way (`Discord__<Key>`).
 
 | key           | description                                                                                         |
 |---------------|-----------------------------------------------------------------------------------------------------|
