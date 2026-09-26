@@ -24,6 +24,8 @@ public class SudoCommands(
     InteractionHandler interactionHandler
 ) : ModuleBase<SocketCommandContext>
 {
+    private static readonly TimeSpan ShellTimeout = TimeSpan.FromSeconds(30);
+
     [Command("run")]
     [Alias("eval", "execute")]
     [Summary("Runs C# code")]
@@ -133,13 +135,33 @@ public class SudoCommands(
         {
             await process.StandardInput.WriteLineAsync(commandLine);
             await process.StandardInput.FlushAsync();
+        }
 
-            process.StandardInput.Close();
+        process.StandardInput.Close();
+
+        var timedOut = false;
+
+        using (var timeout = new CancellationTokenSource(ShellTimeout))
+        {
+            try
+            {
+                await process.WaitForExitAsync(timeout.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                process.Kill(entireProcessTree: true);
+                timedOut = true;
+            }
         }
 
         await process.WaitForExitAsync();
 
         var result = await outputTask + await errorTask;
+
+        if (timedOut)
+        {
+            result += $"\nTimed out after {ShellTimeout.TotalSeconds} seconds.";
+        }
 
         await Context.ReplyAsFileAsync($"```{result}```");
     }
