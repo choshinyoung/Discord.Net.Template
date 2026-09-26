@@ -4,12 +4,13 @@ using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Services;
 using Discord.Net.Template.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace Discord.Net.Template.Modules.Commands;
 
 [Group("help")]
 [Order(1)]
-public class Help(CommandService command, PaginatorHandler paginator)
+public class Help(IConfiguration config, CommandService command, PaginatorHandler paginator)
     : ModuleBase<SocketCommandContext>
 {
     [Command("")]
@@ -49,7 +50,10 @@ public class Help(CommandService command, PaginatorHandler paginator)
                 command.Parameters.Where(p => p.Name != "").Select(p => $"`{p.Name}`")
             );
 
-            embed.AddField($"/{command.GetFullName()} {parameters}", command.Summary);
+            embed.AddField(
+                $"{config["Discord:Prefix"]}{command.GetFullName()} {parameters}",
+                command.Summary
+            );
         }
 
         await Context.ReplyEmbedAsync(embed.Build());
