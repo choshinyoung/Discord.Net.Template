@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Discord.Net.Template": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

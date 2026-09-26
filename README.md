@@ -39,7 +39,15 @@ dotnet new dnettemplate -n MyBot --text-commands false
 
 ### 4. Configure the token
 
-Avoid committing your token. Set it as an environment variable, which overrides `appsettings.json`:
+Keep the token out of `appsettings.json` so it never gets committed.
+
+For local development, use [User Secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets). They're stored outside the project folder and loaded when running with the included launch profile (`DOTNET_ENVIRONMENT=Development`):
+
+```sh
+dotnet user-secrets set Discord:Token "your-token"
+```
+
+For deployment, use an environment variable instead:
 
 ```sh
 # bash
@@ -48,7 +56,7 @@ export Discord__Token="your-token"
 $env:Discord__Token = "your-token"
 ```
 
-You can also put it in `Discord:Token` in `appsettings.json` for local testing.
+The bot stops with an error at startup if no token is configured.
 
 ### 5. Run
 
@@ -60,11 +68,11 @@ Global slash commands can take a while to show up. While developing, set `Discor
 
 ## Configuration
 
-All settings live under the `Discord` section of `appsettings.json` and can be overridden with environment variables (`Discord__<Key>`).
+All settings live under the `Discord` section of `appsettings.json` and can be overridden with user secrets or environment variables (`Discord__<Key>`).
 
 | key           | description                                                                                         |
 |---------------|-----------------------------------------------------------------------------------------------------|
-| `Token`       | Bot token                                                                                           |
+| `Token`       | Bot token. Set it with user secrets or an environment variable, not in `appsettings.json`           |
 | `Prefix`      | Prefix for text commands                                                                            |
 | `Intents`     | Gateway intents, e.g. `AllUnprivileged, MessageContent` (defaults to `AllUnprivileged`)             |
 | `DebugMode`   | Shows detailed error messages in replies, and enables test guild registration                       |

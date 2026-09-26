@@ -23,7 +23,17 @@ public class BotService(
             await handler.InitializeAsync();
         }
 
-        await client.LoginAsync(TokenType.Bot, config["Discord:Token"]);
+        var token = config["Discord:Token"];
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            throw new InvalidOperationException(
+                "Discord:Token is not configured. Set it with `dotnet user-secrets set Discord:Token <token>` "
+                    + "or the Discord__Token environment variable."
+            );
+        }
+
+        await client.LoginAsync(TokenType.Bot, token);
         await client.StartAsync();
 
         await Task.Delay(-1, stoppingToken);

@@ -6,6 +6,7 @@
   "name": "Discord.Net Template",
   "shortName": "dnettemplate",
   "sourceName": "Discord.Net.Template",
+  "guids": ["d1d4f100-9137-414e-bb49-f73e53e74684"],
   "tags": {
     "language": "C#",
     "type": "project"
