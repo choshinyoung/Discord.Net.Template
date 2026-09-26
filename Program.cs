@@ -28,7 +28,8 @@ builder.Services.AddSingleton(x => new InteractionService(
 
 builder.Services.AddSingleton(x => new CommandService(new() { LogLevel = logLevel }));
 
-builder.Services.AddSingleton<IModuleHandler, InteractionHandler>();
+builder.Services.AddSingleton<InteractionHandler>();
+builder.Services.AddSingleton<IModuleHandler>(sp => sp.GetRequiredService<InteractionHandler>());
 builder.Services.AddSingleton<IModuleHandler, CommandHandler>();
 
 builder.Services.AddSingleton<PaginatorHandler>();

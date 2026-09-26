@@ -49,9 +49,25 @@ public class InteractionHandler(
         await Task.CompletedTask;
     }
 
+    public async Task RegisterCommandsAsync()
+    {
+        var testGuildId = config.GetValue<ulong>("Discord:TestGuildId");
+
+        if (config.GetValue<bool>("Discord:DebugMode") && testGuildId != 0)
+        {
+            await interaction.RegisterCommandsToGuildAsync(testGuildId);
+        }
+        else
+        {
+            await interaction.RegisterCommandsGloballyAsync();
+        }
+    }
+
     private async Task HandleReadyAsync()
     {
-        await interaction.RegisterCommandsGloballyAsync();
+        client.Ready -= HandleReadyAsync;
+
+        await RegisterCommandsAsync();
     }
 
     private async Task HandleInteractionCreatedAsync(SocketInteraction intr)

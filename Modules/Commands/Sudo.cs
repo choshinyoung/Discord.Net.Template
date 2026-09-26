@@ -21,7 +21,7 @@ public class SudoCommands(
     DiscordSocketClient client,
     IConfiguration config,
     IEnumerable<IModuleHandler> handlers,
-    Discord.Interactions.InteractionService interaction
+    InteractionHandler interactionHandler
 ) : ModuleBase<SocketCommandContext>
 {
     [Command("run")]
@@ -180,7 +180,7 @@ public class SudoCommands(
             await handler.LoadModulesAsync();
         }
 
-        await interaction.RegisterCommandsGloballyAsync();
+        await interactionHandler.RegisterCommandsAsync();
 
         await Context.ReplyAsync("Reload complete.");
     }
