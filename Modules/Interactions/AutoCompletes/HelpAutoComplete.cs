@@ -2,7 +2,6 @@ using Discord;
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
-using Discord.Net.Template.Utils;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Discord.Net.Template.Modules.Interactions.AutoCompletes;
@@ -24,7 +23,7 @@ public class HelpAutoComplete : AutocompleteHandler
         var suggestions = modules
             .SelectMany(x => x.GetCommands())
             .Where(x =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(x)
+                !x.Attributes.HasAttribute<HideInHelpAttribute>()
                 && !string.IsNullOrEmpty(x.Description)
                 && x.Name.Contains(userInput, StringComparison.OrdinalIgnoreCase)
             )

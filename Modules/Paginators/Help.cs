@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
-using Discord.Net.Template.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace Discord.Net.Template.Modules.Paginators;
@@ -23,7 +22,7 @@ public class Help(IConfiguration config, InteractionService interaction, Command
 
         var commands = module
             .SlashCommands.Where(c =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(c)
+                !c.Attributes.HasAttribute<HideInHelpAttribute>()
                 && !string.IsNullOrEmpty(c.Description)
             )
             .DistinctBy(c => c.Name)
@@ -59,7 +58,8 @@ public class Help(IConfiguration config, InteractionService interaction, Command
 
         var commands = module
             .Commands.Where(c =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary)
+                !c.Attributes.HasAttribute<HideInHelpAttribute>()
+                && !string.IsNullOrEmpty(c.Summary)
             )
             .DistinctBy(c => c.Name)
             .ToList();

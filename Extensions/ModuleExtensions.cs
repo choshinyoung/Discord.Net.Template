@@ -1,7 +1,6 @@
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
-using Discord.Net.Template.Utils;
 
 namespace Discord.Net.Template.Extensions;
 
@@ -15,7 +14,7 @@ public static class ModuleExtensions
         [
             .. interaction.Modules.Where(m =>
                 !m.IsSubModule
-                && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+                && !m.Attributes.HasAttribute<HideInHelpAttribute>()
                 && m.SlashCommands.Any()
             ),
         ];
@@ -35,9 +34,7 @@ public static class ModuleExtensions
 
     public static int GetOrder(this Discord.Interactions.ModuleInfo module)
     {
-        return InfoUtil.HaveAttribute<OrderAttribute>(module)
-            ? InfoUtil.GetAttribute<OrderAttribute>(module).Order
-            : int.MaxValue;
+        return module.Attributes.GetAttribute<OrderAttribute>()?.Order ?? int.MaxValue;
     }
 
     public static string GetFullName(this ICommandInfo command)
@@ -60,7 +57,7 @@ public static class ModuleExtensions
         List<Discord.Commands.ModuleInfo> modules =
         [
             .. command.Modules.Where(m =>
-                !m.IsSubmodule && !InfoUtil.HaveAttribute<HideInHelpAttribute>(m)
+                !m.IsSubmodule && !m.Attributes.HasAttribute<HideInHelpAttribute>()
             ),
         ];
         modules.Sort((m1, m2) => GetOrder(m1).CompareTo(GetOrder(m2)));
@@ -75,9 +72,7 @@ public static class ModuleExtensions
 
     public static int GetOrder(this Discord.Commands.ModuleInfo module)
     {
-        return InfoUtil.HaveAttribute<OrderAttribute>(module)
-            ? InfoUtil.GetAttribute<OrderAttribute>(module).Order
-            : int.MaxValue;
+        return module.Attributes.GetAttribute<OrderAttribute>()?.Order ?? int.MaxValue;
     }
 
     public static string GetFullName(this CommandInfo command)

@@ -4,7 +4,6 @@ using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Modules.Interactions.AutoCompletes;
 using Discord.Net.Template.Services;
-using Discord.Net.Template.Utils;
 
 namespace Discord.Net.Template.Modules.Interactions;
 
@@ -32,7 +31,7 @@ public class Help(InteractionService interaction, PaginatorHandler paginator)
         var commands = modules
             .SelectMany(x => x.GetCommands())
             .Where(c =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(c)
+                !c.Attributes.HasAttribute<HideInHelpAttribute>()
                 && !string.IsNullOrEmpty(c.Description)
             )
             .Where(c => c.Name == commandName || c.GetFullName() == commandName)

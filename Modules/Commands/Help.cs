@@ -3,7 +3,6 @@ using Discord.Commands;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
 using Discord.Net.Template.Services;
-using Discord.Net.Template.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace Discord.Net.Template.Modules.Commands;
@@ -29,7 +28,8 @@ public class Help(IConfiguration config, CommandService command, PaginatorHandle
         var commands = modules
             .SelectMany(x => x.GetCommands())
             .Where(c =>
-                !InfoUtil.HaveAttribute<HideInHelpAttribute>(c) && !string.IsNullOrEmpty(c.Summary)
+                !c.Attributes.HasAttribute<HideInHelpAttribute>()
+                && !string.IsNullOrEmpty(c.Summary)
             )
             .Where(c => c.Name == commandName || c.GetFullName() == commandName)
             .ToList();
