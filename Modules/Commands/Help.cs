@@ -23,16 +23,7 @@ public class Help(IConfiguration config, CommandService command, PaginatorHandle
     [Summary("Checks description for specific commands")]
     public async Task HelpSingleCommand([Remainder, Name("command")] string commandName)
     {
-        var modules = command.GetModules();
-
-        var commands = modules
-            .SelectMany(x => x.GetCommands())
-            .Where(c =>
-                !c.Attributes.HasAttribute<HideInHelpAttribute>()
-                && !string.IsNullOrEmpty(c.Summary)
-            )
-            .Where(c => c.Name == commandName || c.GetFullName() == commandName)
-            .ToList();
+        var commands = command.FindHelpCommands(commandName);
 
         if (commands.Count == 0)
         {
@@ -45,15 +36,7 @@ public class Help(IConfiguration config, CommandService command, PaginatorHandle
 
         foreach (var command in commands)
         {
-            var parameters = string.Join(
-                ' ',
-                command.Parameters.Where(p => p.Name != "").Select(p => $"`{p.Name}`")
-            );
-
-            embed.AddField(
-                $"{config["Discord:Prefix"]}{command.GetFullName()} {parameters}",
-                command.Summary
-            );
+            embed.AddField(command.GetUsage(config["Discord:Prefix"]), command.Summary);
         }
 
         await Context.ReplyEmbedAsync(embed.Build());

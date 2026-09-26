@@ -20,27 +20,11 @@ public class Help(IConfiguration config, InteractionService interaction, Command
             .WithDefaultColor()
             .WithTitle(module.SlashGroupName ?? module.Name);
 
-        var commands = module
-            .SlashCommands.Where(c =>
-                !c.Attributes.HasAttribute<HideInHelpAttribute>()
-                && !string.IsNullOrEmpty(c.Description)
-            )
-            .DistinctBy(c => c.Name)
-            .ToList();
+        var commands = module.SlashCommands.Where(c => c.IsVisibleInHelp()).DistinctBy(c => c.Name);
 
         foreach (var command in commands)
         {
-            var parameters = string.Join(
-                ' ',
-                command
-                    .Parameters.Where(p => p.Name != "")
-                    .Select(p => p.IsRequired ? $"`{p.Name}`" : $"`[{p.Name}]`")
-            );
-
-            embed.AddField(
-                $"/{command.GetFullName()} {parameters}",
-                command.Description.Split('\n')[0]
-            );
+            embed.AddField(command.GetUsage(), command.Description.Split('\n')[0]);
         }
 
         embed.WithFooter($"Page {Index + 1}/{modules.Count}");
@@ -56,23 +40,12 @@ public class Help(IConfiguration config, InteractionService interaction, Command
 
         var embed = new EmbedBuilder().WithDefaultColor().WithTitle(module.Name);
 
-        var commands = module
-            .Commands.Where(c =>
-                !c.Attributes.HasAttribute<HideInHelpAttribute>()
-                && !string.IsNullOrEmpty(c.Summary)
-            )
-            .DistinctBy(c => c.Name)
-            .ToList();
+        var commands = module.Commands.Where(c => c.IsVisibleInHelp()).DistinctBy(c => c.Name);
 
         foreach (var command in commands)
         {
-            var parameters = string.Join(
-                ' ',
-                command.Parameters.Where(p => p.Name != "").Select(p => $"`{p.Name}`")
-            );
-
             embed.AddField(
-                $"{config["Discord:Prefix"]}{command.GetFullName()} {parameters}",
+                command.GetUsage(config["Discord:Prefix"]),
                 command.Summary.Split('\n')[0]
             );
         }
