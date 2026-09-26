@@ -29,6 +29,7 @@ public class HelpAutoComplete : AutocompleteHandler
                 && x.Name.Contains(userInput, StringComparison.OrdinalIgnoreCase)
             )
             .DistinctBy(x => x.GetFullName())
+            .Take(25)
             .ToList();
 
         return Task.FromResult(
