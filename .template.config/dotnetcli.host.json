@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/dotnetcli.host",
+  "symbolInfo": {
+    "Prefix": {
+      "longName": "prefix",
+      "shortName": ""
+    },
+    "TextCommands": {
+      "longName": "text-commands",
+      "shortName": ""
+    },
+    "Sudo": {
+      "longName": "sudo",
+      "shortName": ""
+    }
+  }
+}

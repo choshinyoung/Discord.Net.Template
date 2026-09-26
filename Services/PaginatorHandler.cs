@@ -1,6 +1,8 @@
 using System.Reflection;
 using Discord;
+//#if (TextCommands)
 using Discord.Commands;
+//#endif
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 using Discord.Net.Template.Extensions;
@@ -74,6 +76,7 @@ public class PaginatorHandler(IServiceProvider services, ILogger<PaginatorHandle
         await Task.CompletedTask;
     }
 
+    //#if (TextCommands)
     public async Task InitPaginator(SocketCommandContext context, string id, int index = 0)
     {
         if (await BuildPageAsync(id, index) is ({ } embed, var isLastPage))
@@ -84,6 +87,8 @@ public class PaginatorHandler(IServiceProvider services, ILogger<PaginatorHandle
             );
         }
     }
+
+    //#endif
 
     public async Task InitPaginator(SocketInteractionContext context, string id, int index = 0)
     {

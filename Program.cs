@@ -1,5 +1,7 @@
 ﻿using Discord;
+//#if (TextCommands)
 using Discord.Commands;
+//#endif
 using Discord.Interactions;
 using Discord.Net.Template.Services;
 using Discord.WebSocket;
@@ -26,12 +28,14 @@ builder.Services.AddSingleton(x => new InteractionService(
     }
 ));
 
-builder.Services.AddSingleton(x => new CommandService(new() { LogLevel = logLevel }));
-
 builder.Services.AddSingleton<InteractionHandler>();
 builder.Services.AddSingleton<IModuleHandler>(sp => sp.GetRequiredService<InteractionHandler>());
+
+//#if (TextCommands)
+builder.Services.AddSingleton(x => new CommandService(new() { LogLevel = logLevel }));
 builder.Services.AddSingleton<IModuleHandler, CommandHandler>();
 
+//#endif
 builder.Services.AddSingleton<PaginatorHandler>();
 builder.Services.AddSingleton<IModuleHandler>(sp => sp.GetRequiredService<PaginatorHandler>());
 

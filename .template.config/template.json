@@ -11,11 +11,29 @@
     "type": "project"
   },
   "symbols": {
-    "sudo": {
+    "Prefix": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "!",
+      "description": "Prefix for text commands.",
+      "replaces": "!",
+      "onlyIf": [{ "after": "\"Prefix\": \"" }]
+    },
+    "TextCommands": {
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
-      "description": "Include owner-only sudo commands (run C# code, shell, su, reload)."
+      "description": "Include prefix-based text commands (requires the MessageContent intent)."
+    },
+    "Sudo": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Include owner-only sudo commands (run C# code, shell, su, reload). Requires text commands."
+    },
+    "IncludeSudo": {
+      "type": "computed",
+      "value": "(Sudo && TextCommands)"
     }
   },
   "sources": [
@@ -33,7 +51,16 @@
       ],
       "modifiers": [
         {
-          "condition": "(!sudo)",
+          "condition": "(!TextCommands)",
+          "exclude": [
+            "Modules/Commands/**",
+            "Modules/Paginators/CommandHelp.cs",
+            "Services/CommandHandler.cs",
+            "Extensions/SocketCommandContextExtensions.cs"
+          ]
+        },
+        {
+          "condition": "(!IncludeSudo)",
           "exclude": ["Modules/Commands/Sudo.cs", "Utils/RegexUtil.cs"]
         }
       ]

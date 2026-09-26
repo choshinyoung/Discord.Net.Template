@@ -1,4 +1,6 @@
+//#if (TextCommands)
 using Discord.Commands;
+//#endif
 using Discord.Interactions;
 using Discord.Net.Template.Attributes;
 
@@ -52,6 +54,7 @@ public static class ModuleExtensions
         return $"{module.Parent.GetParentName()} {module.SlashGroupName}".Trim();
     }
 
+    //#if (TextCommands)
     public static List<Discord.Commands.ModuleInfo> GetModules(this CommandService command)
     {
         List<Discord.Commands.ModuleInfo> modules =
@@ -84,4 +87,5 @@ public static class ModuleExtensions
     {
         return module is null ? "" : $"{module.Parent.GetParentName()} {module.Group}".Trim();
     }
+    //#endif
 }
