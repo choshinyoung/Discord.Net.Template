@@ -29,6 +29,14 @@ public class BotService(
         await Task.Delay(-1, stoppingToken);
     }
 
+    public override async Task StopAsync(CancellationToken cancellationToken)
+    {
+        await base.StopAsync(cancellationToken);
+
+        await client.StopAsync();
+        await client.LogoutAsync();
+    }
+
     private Task HandleLogAsync(LogMessage message)
     {
         logger.Log(message);
