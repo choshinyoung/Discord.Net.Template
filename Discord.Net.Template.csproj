@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.20.1" />
+    <!--#if (sudo) -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.9.0" />
+    <!--#endif -->
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
